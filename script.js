@@ -172,15 +172,17 @@ window.addEventListener('scroll', () => {
 // Skills animation counter
 function animateCounter(element, target, duration = 2000) {
     let start = 0;
+    const isDecimal = target % 1 !== 0;
     const increment = target / (duration / 50);
-    
+    const suffix = element.dataset.suffix || '';
+
     const timer = setInterval(() => {
         start += increment;
         if (start >= target) {
-            element.textContent = target + (element.textContent.includes('+') ? '+' : element.textContent.includes('%') ? '%' : '');
+            element.textContent = isDecimal ? target.toFixed(2) + suffix : target + suffix;
             clearInterval(timer);
         } else {
-            element.textContent = Math.floor(start) + (element.textContent.includes('+') ? '+' : element.textContent.includes('%') ? '%' : '');
+            element.textContent = isDecimal ? start.toFixed(2) + suffix : Math.floor(start) + suffix;
         }
     }, 50);
 }
@@ -190,7 +192,15 @@ const statsObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
             const statNumber = entry.target.querySelector('h3');
-            const targetValue = parseInt(statNumber.textContent);
+            // Extract suffix if present (e.g., '+', '%')
+            const match = statNumber.textContent.match(/([\d.]+)(\D*)/);
+            let targetValue = 0;
+            let suffix = '';
+            if (match) {
+                targetValue = parseFloat(match[1]);
+                suffix = match[2] || '';
+            }
+            statNumber.dataset.suffix = suffix;
             animateCounter(statNumber, targetValue);
             statsObserver.unobserve(entry.target);
         }
