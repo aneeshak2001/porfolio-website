@@ -122,12 +122,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const animateElements = document.querySelectorAll(
         '.project-card, .skill-category, .stat, .timeline-item, .about-text p, .achievement-card'
     );
-    
-    animateElements.forEach((el, index) => {
+    animateElements.forEach((el) => {
         el.style.opacity = '0';
-        el.style.transform = 'translateY(30px)';
-        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        el.style.transitionDelay = `${index * 0.1}s`;
+        el.style.transform = 'translateY(20px)';
+        el.style.transition = 'opacity 0.25s cubic-bezier(.4,2,.6,1), transform 0.25s cubic-bezier(.4,2,.6,1)';
+        el.style.transitionDelay = '0s';
         observer.observe(el);
     });
 });
@@ -215,6 +214,14 @@ document.addEventListener('DOMContentLoaded', () => {
 // Add loading animation
 window.addEventListener('load', () => {
     document.body.classList.add('loaded');
+    // Remove preloader immediately on load
+    const preloader = document.getElementById('preloader');
+    if (preloader) {
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+            preloader.remove();
+        }, 300);
+    }
 });
 
 // Preloader (optional)
@@ -260,12 +267,5 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.appendChild(preloader);
     
     // Remove preloader after page loads
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            preloader.style.opacity = '0';
-            setTimeout(() => {
-                preloader.remove();
-            }, 500);
-        }, 1000);
-    });
+    // (Preloader removal now handled above for instant load)
 });
