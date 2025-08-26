@@ -63,7 +63,12 @@ window.addEventListener('scroll', () => {
 
 // Contact form handling
 const contactForm = document.getElementById('contact-form');
-contactForm.addEventListener('submit', function(e) {
+const submitBtn = document.getElementById('submit-btn');
+const btnText = submitBtn.querySelector('.btn-text');
+const btnLoading = submitBtn.querySelector('.btn-loading');
+const formStatus = document.getElementById('form-status');
+
+contactForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     
     // Get form data
@@ -75,32 +80,92 @@ contactForm.addEventListener('submit', function(e) {
     
     // Simple validation
     if (!name || !email || !subject || !message) {
-        alert('Please fill in all fields.');
+        showStatus('Please fill in all fields.', 'error');
         return;
     }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        alert('Please enter a valid email address.');
+        showStatus('Please enter a valid email address.', 'error');
         return;
     }
     
-    // Simulate form submission (replace with actual form handling)
-    const submitButton = contactForm.querySelector('button[type="submit"]');
-    const originalText = submitButton.textContent;
+    // Show loading state
+    showLoading(true);
     
-    submitButton.textContent = 'Sending...';
-    submitButton.disabled = true;
-    
-    // Simulate API call
-    setTimeout(() => {
-        alert('Thank you for your message! I\'ll get back to you soon.');
+    try {
+        // Create mailto link as fallback
+        const mailtoBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+        const mailtoLink = `mailto:aneeshak2001@gmail.com?subject=${encodeURIComponent(subject)}&body=${mailtoBody}`;
+        
+        // Try to send via Web3Forms (free service) first
+        const web3FormsResponse = await fetch('https://api.web3forms.com/submit', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            },
+            body: JSON.stringify({
+                access_key: "0c8a2865-28c4-4a95-8105-2f6173f41826", // This needs to be replaced with actual key
+                name: name,
+                email: email,
+                subject: subject,
+                message: message,
+                from_name: name,
+                to_email: "aneeshak2001@gmail.com"
+            })
+        });
+        
+        if (web3FormsResponse.ok) {
+            const result = await web3FormsResponse.json();
+            if (result.success) {
+                showStatus('Thank you for your message! I\'ll get back to you soon.', 'success');
+                contactForm.reset();
+            } else {
+                throw new Error('Web3Forms submission failed');
+            }
+        } else {
+            throw new Error('Web3Forms service unavailable');
+        }
+    } catch (error) {
+        console.log('Primary service failed, opening email client...', error);
+        
+        // Fallback: Open default email client
+        const mailtoBody = `Name: ${name}%0D%0AEmail: ${email}%0D%0A%0D%0AMessage:%0D%0A${message}`;
+        const mailtoLink = `mailto:aneeshak2001@gmail.com?subject=${encodeURIComponent(subject)}&body=${mailtoBody}`;
+        
+        window.location.href = mailtoLink;
+        
+        showStatus('Opening your email client... If it doesn\'t open automatically, please email me directly at aneeshak2001@gmail.com', 'success');
         contactForm.reset();
-        submitButton.textContent = originalText;
-        submitButton.disabled = false;
-    }, 2000);
+    } finally {
+        showLoading(false);
+    }
 });
+
+function showLoading(isLoading) {
+    if (isLoading) {
+        btnText.style.display = 'none';
+        btnLoading.style.display = 'inline';
+        submitBtn.disabled = true;
+    } else {
+        btnText.style.display = 'inline';
+        btnLoading.style.display = 'none';
+        submitBtn.disabled = false;
+    }
+}
+
+function showStatus(message, type) {
+    formStatus.innerHTML = message;
+    formStatus.className = `form-status ${type}`;
+    formStatus.style.display = 'block';
+    
+    // Hide status after 7 seconds
+    setTimeout(() => {
+        formStatus.style.display = 'none';
+    }, 7000);
+}
 
 // Intersection Observer for animations
 const observerOptions = {

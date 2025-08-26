@@ -44,8 +44,8 @@ I am a B.Tech Mechanical Engineering graduate from IIT Madras (CGPA: 8.95) curre
 1. **Equity Derivatives Index Platform** - Morgan Stanley live trading system
 2. **FX Options Trading Platform** - Ultra low-latency trading system
 3. **Collateral Management Platform** - Risk management for banks
-4. **ML-based Inventory Management** - Q-learning optimization (ongoing)
-5. **AR Sudoku Solver** - Computer vision and ML application
+4. **ML-based Inventory Management** - Q-learning optimization (ongoing) - https://github.com/aneeshak2001/Inventory-Management
+5. **AR Sudoku Solver** - Computer vision and ML application - https://github.com/aneeshak2001/AR-Sudoku-Solver
 6. **SIMM Validation System** - Financial risk calculation tool
 
 ## Technical Skills
@@ -64,7 +64,7 @@ I am a B.Tech Mechanical Engineering graduate from IIT Madras (CGPA: 8.95) curre
 
 ## Contact
 
-- **Email**: aneeshak1002@gmail.com
+- **Email**: aneeshak2001@gmail.com
 - **Phone**: +91 9176340445
 - **Current Role**: Senior Associate, Morgan Stanley
 - **Education**: IIT Madras
