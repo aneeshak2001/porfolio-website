@@ -1589,6 +1589,51 @@ html {
     font-style: italic;
 }
 
+/* Game Tabs */
+.game-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.game-tab {
+    padding: 12px 24px;
+    background: var(--card-bg);
+    border: 2px solid var(--border-color);
+    border-radius: 25px;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+}
+
+.game-tab:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px var(--shadow-medium);
+}
+
+.game-tab.active {
+    background: var(--gradient-primary);
+    color: white;
+    border-color: transparent;
+}
+
+.game-container {
+    display: none;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.game-container.active {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
 .game-container {
     background: var(--card-bg);
     border-radius: 20px;
@@ -1699,17 +1744,38 @@ html {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: rgba(0, 0, 0, 0.9);
+    background: rgba(0, 0, 0, 0.95);
     color: white;
     padding: 2rem;
     border-radius: 15px;
     text-align: center;
     backdrop-filter: blur(10px);
+    animation: gameOverFadeIn 0.5s ease-in-out;
+    z-index: 100;
+    min-width: 250px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+@keyframes gameOverFadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(1);
+    }
 }
 
 .game-over-screen h3 {
     margin: 0 0 1rem 0;
     font-size: 1.5rem;
+}
+
+.game-over-screen p {
+    margin: 0 0 1.5rem 0;
+    font-size: 1.1rem;
+    color: #cccccc;
 }
 
 .game-stats {
@@ -1740,6 +1806,124 @@ html {
     color: var(--text-primary);
     font-size: 1.1rem;
 }
+
+/* 2048 Game Styles */
+.game2048-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-gap: 8px;
+    padding: 10px;
+    background: #bbada0;
+    border-radius: 10px;
+    position: relative;
+    width: 320px;
+    height: 320px;
+    margin: 0 auto;
+}
+
+.game-canvas-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2rem;
+}
+
+.game2048-cell {
+    background: rgba(238, 228, 218, 0.35);
+    border-radius: 6px;
+    width: 70px;
+    height: 70px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.game2048-tile {
+    position: absolute;
+    width: 70px;
+    height: 70px;
+    border-radius: 6px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    transition: left 0.25s cubic-bezier(0.23, 1, 0.32, 1), 
+                top 0.25s cubic-bezier(0.23, 1, 0.32, 1),
+                transform 0.2s ease-in-out,
+                opacity 0.2s ease-in-out;
+    z-index: 10;
+}
+
+/* Animation for new tiles */
+@keyframes tileAppear {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Animation for tile merging */
+@keyframes tileMerge {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.15);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+.tile-merged {
+    animation: tileMerge 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* Animation for sliding tiles */
+@keyframes tileSlide {
+    0% {
+        transform: translateX(var(--slide-x, 0)) translateY(var(--slide-y, 0));
+    }
+    100% {
+        transform: translateX(0) translateY(0);
+    }
+}
+
+/* Special animations for high-value tiles */
+@keyframes pulseGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(237, 194, 46, 0.4);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(237, 194, 46, 0.8);
+    }
+}
+
+.tile-1024, .tile-2048 {
+    animation: pulseGlow 2s ease-in-out infinite;
+}
+
+/* 2048 Tile Colors */
+.tile-2 { background: #eee4da; color: #776e65; }
+.tile-4 { background: #ede0c8; color: #776e65; }
+.tile-8 { background: #f2b179; color: #f9f6f2; }
+.tile-16 { background: #f59563; color: #f9f6f2; }
+.tile-32 { background: #f67c5f; color: #f9f6f2; }
+.tile-64 { background: #f65e3b; color: #f9f6f2; }
+.tile-128 { background: #edcf72; color: #f9f6f2; font-size: 28px; }
+.tile-256 { background: #edcc61; color: #f9f6f2; font-size: 28px; }
+.tile-512 { background: #edc850; color: #f9f6f2; font-size: 28px; }
+.tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 24px; }
+.tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 24px; box-shadow: 0 0 20px rgba(237, 194, 46, 0.5); }
+
+.tile-super { background: #3c3a32; color: #f9f6f2; font-size: 20px; }
 
 .gaming-facts {
     text-align: center;
@@ -1826,5 +2010,42 @@ html {
     
     .game-buttons {
         flex-direction: column;
+    }
+    
+    .game-tabs {
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .game-tab {
+        width: 150px;
+        text-align: center;
+    }
+    
+    .game2048-grid {
+        width: 280px;
+        height: 280px;
+        grid-gap: 6px;
+        padding: 8px;
+    }
+    
+    .game2048-cell,
+    .game2048-tile {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
+    
+    .tile-128, .tile-256, .tile-512 {
+        font-size: 20px;
+    }
+    
+    .tile-1024, .tile-2048 {
+        font-size: 18px;
+    }
+    
+    .tile-super {
+        font-size: 16px;
     }
 }

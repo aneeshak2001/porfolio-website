@@ -23,8 +23,8 @@
                 <a href="#achievements" class="nav-link">Achievements</a>
                 <a href="#projects" class="nav-link">Projects</a>
                 <a href="#skills" class="nav-link">Skills</a>
-                <a href="#game" class="nav-link">Game</a>
                 <a href="#contact" class="nav-link">Contact</a>
+                <a href="#game" class="nav-link">Games</a>
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
                     <div class="theme-toggle-slider"></div>
                 </button>
@@ -463,76 +463,6 @@
         </div>
     </section>
 
-    <!-- Game Section -->
-    <section id="game" class="game-section">
-        <div class="container">
-            <h2 class="section-title">Level Up Zone 🎮</h2>
-            <p class="game-intro">When I'm not optimizing financial algorithms, I'm optimizing my Snake high score! Ready to challenge me?</p>
-            
-            <div class="game-container">
-                <div class="game-header">
-                    <div class="game-info">
-                        <div class="score-display">
-                            <span>Score: <span id="score">0</span></span>
-                            <span>High Score: <span id="highScore">0</span></span>
-                        </div>
-                        <div class="game-controls-info">
-                            <p class="desktop-controls">Use arrow keys or WASD to move the snake</p>
-                            <p class="mobile-controls">Swipe to control the snake 📱</p>
-                        </div>
-                    </div>
-                    <div class="game-buttons">
-                        <button id="startBtn" class="game-btn">Start Game</button>
-                        <button id="pauseBtn" class="game-btn" disabled>Pause</button>
-                        <button id="resetBtn" class="game-btn">Reset</button>
-                    </div>
-                </div>
-                
-                <div class="game-canvas-container">
-                    <canvas id="gameCanvas" width="400" height="400"></canvas>
-                    <div id="gameOverScreen" class="game-over-screen" style="display: none;">
-                        <h3>Game Over!</h3>
-                        <p>Final Score: <span id="finalScore">0</span></p>
-                        <button id="restartBtn" class="game-btn">Play Again</button>
-                    </div>
-                </div>
-                
-                <div class="game-stats">
-                    <div class="stat-item">
-                        <span class="stat-label">Games Played:</span>
-                        <span id="gamesPlayed">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Food Eaten:</span>
-                        <span id="foodEaten">0</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Time Played:</span>
-                        <span id="timePlayed">0s</span>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="gaming-facts">
-                <h3>Gaming Philosophy 🎯</h3>
-                <div class="facts-grid">
-                    <div class="fact-card">
-                        <i class="fas fa-brain"></i>
-                        <p>"Gaming taught me problem-solving before algorithms did"</p>
-                    </div>
-                    <div class="fact-card">
-                        <i class="fas fa-clock"></i>
-                        <p>"My APM in StarCraft > My trades per minute at Morgan Stanley"</p>
-                    </div>
-                    <div class="fact-card">
-                        <i class="fas fa-trophy"></i>
-                        <p>"Grinding levels in games = Training for grinding Excel models"</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
@@ -594,6 +524,129 @@
                         Or email me directly at <a href="mailto:aneeshak2001@gmail.com">aneeshak2001@gmail.com</a>
                     </div>
                 </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Game Section -->
+    <section id="game" class="game-section">
+        <div class="container">
+            <h2 class="section-title">Level Up Zone 🎮</h2>
+            <p class="game-intro">Thanks for making it this far! Here's a little bonus - some games I built. Perfect for taking a break! 🚀</p>
+            
+            <!-- Game Tabs -->
+            <div class="game-tabs">
+                <button class="game-tab active" data-game="snake">🐍 Snake</button>
+                <button class="game-tab" data-game="2048">🔢 2048</button>
+            </div>
+            
+            <!-- Snake Game -->
+            <div id="snake-game" class="game-container active">
+                <div class="game-header">
+                    <div class="game-info">
+                        <div class="score-display">
+                            <span>Score: <span id="score">0</span></span>
+                            <span>High Score: <span id="highScore">0</span></span>
+                        </div>
+                        <div class="game-controls-info">
+                            <p class="desktop-controls">Use arrow keys or WASD to move the snake</p>
+                            <p class="mobile-controls">Swipe to control the snake 📱</p>
+                        </div>
+                    </div>
+                    <div class="game-buttons">
+                        <button id="startBtn" class="game-btn">Start Game</button>
+                        <button id="pauseBtn" class="game-btn" disabled>Pause</button>
+                        <button id="resetBtn" class="game-btn">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="game-canvas-container">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    <div id="gameOverScreen" class="game-over-screen" style="display: none;">
+                        <h3>Game Over!</h3>
+                        <p>Final Score: <span id="finalScore">0</span></p>
+                        <button id="restartBtn" class="game-btn">Play Again</button>
+                    </div>
+                </div>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Games Played:</span>
+                        <span id="gamesPlayed">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Food Eaten:</span>
+                        <span id="foodEaten">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Time Played:</span>
+                        <span id="timePlayed">0s</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2048 Game -->
+            <div id="2048-game" class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+                        <div class="score-display">
+                            <span>Score: <span id="game2048Score">0</span></span>
+                            <span>Best: <span id="game2048Best">0</span></span>
+                        </div>
+                        <div class="game-controls-info">
+                            <p class="desktop-controls">Use arrow keys to slide tiles</p>
+                            <p class="mobile-controls">Swipe to slide tiles 📱</p>
+                        </div>
+                    </div>
+                    <div class="game-buttons">
+                        <button id="game2048NewBtn" class="game-btn">New Game</button>
+                        <button id="game2048UndoBtn" class="game-btn" disabled>Undo</button>
+                    </div>
+                </div>
+                
+                <div class="game-canvas-container">
+                    <div id="game2048Grid" class="game2048-grid">
+                        <!-- Grid will be generated by JavaScript -->
+                    </div>
+                    <div id="game2048GameOverScreen" class="game-over-screen" style="display: none;">
+                        <h3 id="game2048EndTitle">Game Over!</h3>
+                        <p>Final Score: <span id="game2048FinalScore">0</span></p>
+                        <button id="game2048RestartBtn" class="game-btn">Try Again</button>
+                    </div>
+                </div>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Games Played:</span>
+                        <span id="game2048GamesPlayed">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Best Tile:</span>
+                        <span id="game2048BestTile">2</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Total Score:</span>
+                        <span id="game2048TotalScore">0</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gaming-facts">
+                <h3>Gaming Facts 🎯</h3>
+                <div class="facts-grid">
+                    <div class="fact-card">
+                        <i class="fas fa-gamepad"></i>
+                        <p>The most expensive video game ever made was Grand Theft Auto V, costing over $265 million to develop - more than most Hollywood blockbusters!</p>
+                    </div>
+                    <div class="fact-card">
+                        <i class="fas fa-users"></i>
+                        <p>Mario has appeared in over 200 games since 1981, making him more recognizable to children than Mickey Mouse!</p>
+                    </div>
+                    <div class="fact-card">
+                        <i class="fas fa-clock"></i>
+                        <p>The original Pac-Man arcade machine had a kill screen bug at level 256 that made half the screen unplayable - it took 19 years for someone to reach it!</p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>

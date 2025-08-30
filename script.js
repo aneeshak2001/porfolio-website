@@ -1102,15 +1102,24 @@ class SnakeGame {
         this.pauseBtn.disabled = false;
         this.gameOverScreen.style.display = 'none';
         
+        // Game logic runs at 150ms intervals
         this.gameLoop = setInterval(() => {
             if (!this.gamePaused) {
                 this.update();
-                this.draw();
             }
         }, 150);
         
-        // Add humorous start message
-        this.showToast("Game started! Time to show those financial algorithms who's boss! 🐍", "success");
+        // Rendering runs at 60fps for smooth animations
+        this.animationLoop = () => {
+            if (this.gameRunning) {
+                this.draw();
+                requestAnimationFrame(this.animationLoop);
+            }
+        };
+        this.animationLoop();
+        
+        // Add game start message
+        this.showToast("Game started! 🐍", "success");
     }
     
     togglePause() {
@@ -1147,7 +1156,7 @@ class SnakeGame {
         this.updateDisplay();
         this.draw();
         
-        this.showToast("Game reset! Ready for another round? 🔄", "info");
+        this.showToast("Game reset! 🔄", "info");
     }
     
     restartGame() {
@@ -1186,18 +1195,22 @@ class SnakeGame {
             this.score += 10;
             this.foodEaten++;
             this.foodCountForMessages++;
+            
+            // Create food eating particle effect
+            this.createFoodParticles(this.food.x * this.gridSize, this.food.y * this.gridSize);
+            
             this.generateFood();
             this.updateDisplay();
             
             // Show eat messages only every 5th food consumed
             if (this.foodCountForMessages % 5 === 0) {
                 const eatMessages = [
-                    "Nom nom! That's some premium algorithmic apple! 🍎",
-                    "Delicious! Tastes like successful trades! 💰",
-                    "Growing stronger, just like my portfolio! 📈",
-                    "Snake.exe is running optimally! 🐍💻",
-                    "Fifth course achieved! Fine dining at its best! 🍽️",
-                    "Milestone munching! Every 5th bite counts! 🎯"
+                    "Score +10! �",
+                    "Length increased! �",
+                    "5th food collected! 🍎",
+                    "Growing stronger! �",
+                    "Milestone reached! ⭐",
+                    "Combo x5! 🔥"
                 ];
                 this.showToast(eatMessages[Math.floor(Math.random() * eatMessages.length)], "success");
             }
@@ -1227,25 +1240,68 @@ class SnakeGame {
         this.ctx.fillStyle = isDarkTheme ? '#1a1a1a' : '#ffffff';
         this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
         
-        // Draw snake
-        this.ctx.fillStyle = '#667eea';
-        for (let segment of this.snake) {
-            this.ctx.fillRect(segment.x * this.gridSize, segment.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
+        // Draw snake with gradient and rounded corners
+        for (let i = 0; i < this.snake.length; i++) {
+            const segment = this.snake[i];
+            const x = segment.x * this.gridSize;
+            const y = segment.y * this.gridSize;
+            const size = this.gridSize - 2;
+            
+            if (i === 0) {
+                // Draw snake head with special styling
+                const gradient = this.ctx.createLinearGradient(x, y, x + size, y + size);
+                gradient.addColorStop(0, '#764ba2');
+                gradient.addColorStop(1, '#667eea');
+                this.ctx.fillStyle = gradient;
+                this.ctx.shadowColor = '#667eea';
+                this.ctx.shadowBlur = 10;
+                this.drawRoundedRect(x, y, size, size, 4);
+                this.ctx.shadowBlur = 0;
+                
+                // Add eyes to the head
+                this.ctx.fillStyle = '#ffffff';
+                const eyeSize = 3;
+                const eyeOffset = 4;
+                this.ctx.fillRect(x + eyeOffset, y + eyeOffset, eyeSize, eyeSize);
+                this.ctx.fillRect(x + size - eyeOffset - eyeSize, y + eyeOffset, eyeSize, eyeSize);
+            } else {
+                // Draw body segments with decreasing opacity
+                const opacity = Math.max(0.3, 1 - (i / this.snake.length) * 0.7);
+                this.ctx.fillStyle = `rgba(102, 126, 234, ${opacity})`;
+                this.drawRoundedRect(x, y, size, size, 2);
+            }
         }
         
-        // Draw snake head with different color
-        if (this.snake.length > 0) {
-            this.ctx.fillStyle = '#764ba2';
-            const head = this.snake[0];
-            this.ctx.fillRect(head.x * this.gridSize, head.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
-        }
+        // Draw food with pulsing animation
+        const time = Date.now() / 1000;
+        const pulse = Math.sin(time * 3) * 0.1 + 0.9; // Pulse between 0.8 and 1.0
+        const foodSize = (this.gridSize - 2) * pulse;
+        const foodOffset = (this.gridSize - foodSize) / 2;
         
-        // Draw food
-        this.ctx.fillStyle = '#ff6b6b';
-        this.ctx.fillRect(this.food.x * this.gridSize, this.food.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
+        const foodX = this.food.x * this.gridSize + foodOffset;
+        const foodY = this.food.y * this.gridSize + foodOffset;
+        
+        // Food gradient and glow effect
+        const foodGradient = this.ctx.createRadialGradient(
+            foodX + foodSize/2, foodY + foodSize/2, 0,
+            foodX + foodSize/2, foodY + foodSize/2, foodSize/2
+        );
+        foodGradient.addColorStop(0, '#ff6b6b');
+        foodGradient.addColorStop(1, '#ee5a52');
+        
+        this.ctx.fillStyle = foodGradient;
+        this.ctx.shadowColor = '#ff6b6b';
+        this.ctx.shadowBlur = 15;
+        this.drawRoundedRect(foodX, foodY, foodSize, foodSize, 4);
+        this.ctx.shadowBlur = 0;
+        
+        // Add sparkle effect to food
+        const sparkleSize = 2;
+        this.ctx.fillStyle = '#ffffff';
+        this.ctx.fillRect(foodX + foodSize * 0.3, foodY + foodSize * 0.3, sparkleSize, sparkleSize);
         
         // Add grid lines for better visibility
-        this.ctx.strokeStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        this.ctx.strokeStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.05)' : 'rgba(0, 0, 0, 0.05)';
         this.ctx.lineWidth = 0.5;
         for (let i = 0; i <= this.tileCount; i++) {
             this.ctx.beginPath();
@@ -1258,6 +1314,63 @@ class SnakeGame {
             this.ctx.lineTo(this.canvas.width, i * this.gridSize);
             this.ctx.stroke();
         }
+    }
+    
+    drawRoundedRect(x, y, width, height, radius) {
+        this.ctx.beginPath();
+        this.ctx.moveTo(x + radius, y);
+        this.ctx.lineTo(x + width - radius, y);
+        this.ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+        this.ctx.lineTo(x + width, y + height - radius);
+        this.ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+        this.ctx.lineTo(x + radius, y + height);
+        this.ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+        this.ctx.lineTo(x, y + radius);
+        this.ctx.quadraticCurveTo(x, y, x + radius, y);
+        this.ctx.closePath();
+        this.ctx.fill();
+    }
+    
+    createFoodParticles(x, y) {
+        // Create temporary particles for visual effect
+        const particleCount = 8;
+        const particles = [];
+        
+        for (let i = 0; i < particleCount; i++) {
+            particles.push({
+                x: x + this.gridSize / 2,
+                y: y + this.gridSize / 2,
+                vx: (Math.random() - 0.5) * 6,
+                vy: (Math.random() - 0.5) * 6,
+                life: 1.0,
+                decay: 0.02
+            });
+        }
+        
+        const animateParticles = () => {
+            // Clear and redraw game
+            this.draw();
+            
+            // Draw particles
+            this.ctx.save();
+            for (let particle of particles) {
+                this.ctx.globalAlpha = particle.life;
+                this.ctx.fillStyle = '#ff6b6b';
+                this.ctx.fillRect(particle.x, particle.y, 3, 3);
+                
+                particle.x += particle.vx;
+                particle.y += particle.vy;
+                particle.life -= particle.decay;
+            }
+            this.ctx.restore();
+            
+            // Continue animation if particles are still alive
+            if (particles.some(p => p.life > 0)) {
+                requestAnimationFrame(animateParticles);
+            }
+        };
+        
+        animateParticles();
     }
     
     gameOver() {
@@ -1283,12 +1396,12 @@ class SnakeGame {
         this.pauseBtn.disabled = true;
         this.pauseBtn.textContent = 'Pause';
         
-        // Funny game over messages
+        // Game over messages
         const gameOverMessages = [
-            "Game Over! Even the best algorithms crash sometimes! 💥",
-            "Oops! Looks like your snake hit a NullPointerException! 🐛",
-            "Game Over! Time to debug your snake's pathfinding algorithm! 🔍",
-            "Crashed harder than the stock market in 2008! 📉"
+            "Game Over! �",
+            "Try again! �",
+            "So close! 🎯",
+            "Better luck next time! 🍀"
         ];
         this.showToast(gameOverMessages[Math.floor(Math.random() * gameOverMessages.length)], "error");
     }
@@ -1573,3 +1686,633 @@ function showEmailCopyNotification(message, type) {
         }, 300);
     }, 3000);
 }
+
+// Game Tab Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const gameTabs = document.querySelectorAll('.game-tab');
+    const gameContainers = document.querySelectorAll('.game-container');
+    
+    gameTabs.forEach(tab => {
+        tab.addEventListener('click', () => {
+            // Remove active class from all tabs
+            gameTabs.forEach(t => t.classList.remove('active'));
+            // Add active class to clicked tab
+            tab.classList.add('active');
+            
+            // Hide all game containers
+            gameContainers.forEach(container => container.classList.remove('active'));
+            
+            // Show the selected game container
+            const gameType = tab.getAttribute('data-game');
+            const gameContainer = document.getElementById(`${gameType}-game`);
+            if (gameContainer) {
+                gameContainer.classList.add('active');
+            }
+        });
+    });
+});
+
+// 2048 Game Implementation
+class Game2048 {
+    constructor() {
+        this.grid = [];
+        this.score = 0;
+        this.bestScore = parseInt(localStorage.getItem('2048BestScore') || '0');
+        this.gamesPlayed = parseInt(localStorage.getItem('2048GamesPlayed') || '0');
+        this.bestTile = parseInt(localStorage.getItem('2048BestTile') || '2');
+        this.totalScore = parseInt(localStorage.getItem('2048TotalScore') || '0');
+        this.previousGrid = [];
+        this.previousScore = 0;
+        this.gameWon = false;
+        this.gameOver = false;
+        this.animating = false;
+        this.tileId = 0;
+        this.tiles = new Map(); // Track tiles for animation
+        
+        this.initializeGrid();
+        this.initializeElements();
+        this.updateDisplay();
+        this.bindEvents();
+        this.addTouchControls();
+        this.newGame();
+    }
+    
+    initializeGrid() {
+        this.grid = Array(4).fill().map(() => Array(4).fill(null));
+        this.tiles.clear();
+        this.tileId = 0;
+    }
+    
+    initializeElements() {
+        this.gridElement = document.getElementById('game2048Grid');
+        this.scoreElement = document.getElementById('game2048Score');
+        this.bestElement = document.getElementById('game2048Best');
+        this.newBtn = document.getElementById('game2048NewBtn');
+        this.undoBtn = document.getElementById('game2048UndoBtn');
+        this.gameOverScreen = document.getElementById('game2048GameOverScreen');
+        this.endTitle = document.getElementById('game2048EndTitle');
+        this.finalScoreElement = document.getElementById('game2048FinalScore');
+        this.restartBtn = document.getElementById('game2048RestartBtn');
+        
+        // Stats elements
+        this.gamesPlayedElement = document.getElementById('game2048GamesPlayed');
+        this.bestTileElement = document.getElementById('game2048BestTile');
+        this.totalScoreElement = document.getElementById('game2048TotalScore');
+        
+        this.createGridElements();
+    }
+    
+    createGridElements() {
+        this.gridElement.innerHTML = '';
+        for (let i = 0; i < 16; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'game2048-cell';
+            this.gridElement.appendChild(cell);
+        }
+    }
+    
+    bindEvents() {
+        this.newBtn.addEventListener('click', () => this.newGame());
+        this.undoBtn.addEventListener('click', () => this.undo());
+        this.restartBtn.addEventListener('click', () => this.newGame());
+        
+        document.addEventListener('keydown', (e) => {
+            if (document.getElementById('2048-game').classList.contains('active')) {
+                this.handleKeyPress(e);
+            }
+        });
+    }
+    
+    addTouchControls() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const minSwipeDistance = 30;
+        
+        this.gridElement.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: false });
+        
+        this.gridElement.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (this.gameOver || this.animating) return;
+            
+            const touch = e.changedTouches[0];
+            const touchEndX = touch.clientX;
+            const touchEndY = touch.clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+                return;
+            }
+            
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                if (deltaX > 0) {
+                    this.move('right');
+                } else {
+                    this.move('left');
+                }
+            } else {
+                // Vertical swipe
+                if (deltaY > 0) {
+                    this.move('down');
+                } else {
+                    this.move('up');
+                }
+            }
+        }, { passive: false });
+    }
+    
+    handleKeyPress(e) {
+        if (this.gameOver || this.animating) return;
+        
+        const { key } = e;
+        
+        // Prevent default behavior for all arrow keys to stop page scrolling
+        if (['ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown'].includes(key)) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        if (key === 'ArrowLeft') {
+            this.move('left');
+        } else if (key === 'ArrowRight') {
+            this.move('right');
+        } else if (key === 'ArrowUp') {
+            this.move('up');
+        } else if (key === 'ArrowDown') {
+            this.move('down');
+        }
+    }
+    
+    newGame() {
+        this.initializeGrid();
+        this.score = 0;
+        this.gameWon = false;
+        this.gameOver = false;
+        this.animating = false;
+        this.gameOverScreen.style.display = 'none';
+        this.undoBtn.disabled = true;
+        
+        this.addRandomTile();
+        this.addRandomTile();
+        this.updateDisplay();
+        this.renderGrid();
+        
+        this.gamesPlayed++;
+        localStorage.setItem('2048GamesPlayed', this.gamesPlayed.toString());
+        this.updateStats();
+    }
+    
+    createTile(value, row, col) {
+        const tile = {
+            id: ++this.tileId,
+            value: value,
+            row: row,
+            col: col,
+            previousRow: row,
+            previousCol: col,
+            merged: false,
+            isNew: true
+        };
+        this.tiles.set(tile.id, tile);
+        this.grid[row][col] = tile;
+        return tile;
+    }
+    
+    addRandomTile() {
+        const emptyCells = [];
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (this.grid[i][j] === null) {
+                    emptyCells.push({ x: i, y: j });
+                }
+            }
+        }
+        
+        if (emptyCells.length > 0) {
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            const value = Math.random() < 0.9 ? 2 : 4;
+            this.createTile(value, randomCell.x, randomCell.y);
+        }
+    }
+    
+    move(direction) {
+        if (this.animating) return;
+        
+        this.savePreviousState();
+        
+        // Reset tile states
+        this.tiles.forEach(tile => {
+            tile.previousRow = tile.row;
+            tile.previousCol = tile.col;
+            tile.merged = false;
+            tile.isNew = false;
+        });
+        
+        let moved = false;
+        
+        if (direction === 'left') {
+            moved = this.moveLeft();
+        } else if (direction === 'right') {
+            moved = this.moveRight();
+        } else if (direction === 'up') {
+            moved = this.moveUp();
+        } else if (direction === 'down') {
+            moved = this.moveDown();
+        }
+        
+        if (moved) {
+            this.animating = true;
+            this.renderGrid();
+            
+            setTimeout(() => {
+                this.addRandomTile();
+                this.updateDisplay();
+                this.renderGrid();
+                this.undoBtn.disabled = false;
+                this.animating = false;
+                
+                if (this.isGameWon() && !this.gameWon) {
+                    this.gameWon = true;
+                    setTimeout(() => this.showWinMessage(), 300);
+                }
+                
+                if (this.isGameOver()) {
+                    setTimeout(() => this.endGame(), 300);
+                }
+            }, 250);
+        }
+    }
+    
+    savePreviousState() {
+        this.previousGrid = this.grid.map(row => row.map(cell => cell ? {...cell} : null));
+        this.previousScore = this.score;
+        this.previousTiles = new Map();
+        this.tiles.forEach((tile, id) => {
+            this.previousTiles.set(id, {...tile});
+        });
+    }
+    
+    undo() {
+        if (this.previousGrid.length > 0 && !this.animating) {
+            this.grid = this.previousGrid.map(row => row.map(cell => cell ? {...cell} : null));
+            this.score = this.previousScore;
+            this.tiles = new Map();
+            this.previousTiles.forEach((tile, id) => {
+                this.tiles.set(id, {...tile});
+            });
+            this.updateDisplay();
+            this.renderGrid();
+            this.undoBtn.disabled = true;
+        }
+    }
+    
+    moveLeft() {
+        let moved = false;
+        
+        for (let i = 0; i < 4; i++) {
+            // Get tiles in this row
+            const tiles = [];
+            for (let j = 0; j < 4; j++) {
+                if (this.grid[i][j]) {
+                    tiles.push(this.grid[i][j]);
+                    this.grid[i][j] = null;
+                }
+            }
+            
+            // Merge tiles
+            const mergedTiles = [];
+            for (let j = 0; j < tiles.length; j++) {
+                if (j < tiles.length - 1 && tiles[j].value === tiles[j + 1].value) {
+                    // Merge tiles
+                    tiles[j].value *= 2;
+                    tiles[j].merged = true;
+                    this.score += tiles[j].value;
+                    
+                    // Remove the merged tile
+                    this.tiles.delete(tiles[j + 1].id);
+                    tiles.splice(j + 1, 1);
+                }
+                mergedTiles.push(tiles[j]);
+            }
+            
+            // Place tiles in new positions
+            for (let j = 0; j < mergedTiles.length; j++) {
+                const tile = mergedTiles[j];
+                if (tile.col !== j) {
+                    moved = true;
+                }
+                tile.row = i;
+                tile.col = j;
+                this.grid[i][j] = tile;
+            }
+        }
+        
+        return moved;
+    }
+    
+    moveRight() {
+        let moved = false;
+        
+        for (let i = 0; i < 4; i++) {
+            // Get tiles in this row
+            const tiles = [];
+            for (let j = 3; j >= 0; j--) {
+                if (this.grid[i][j]) {
+                    tiles.push(this.grid[i][j]);
+                    this.grid[i][j] = null;
+                }
+            }
+            
+            // Merge tiles
+            const mergedTiles = [];
+            for (let j = 0; j < tiles.length; j++) {
+                if (j < tiles.length - 1 && tiles[j].value === tiles[j + 1].value) {
+                    // Merge tiles
+                    tiles[j].value *= 2;
+                    tiles[j].merged = true;
+                    this.score += tiles[j].value;
+                    
+                    // Remove the merged tile
+                    this.tiles.delete(tiles[j + 1].id);
+                    tiles.splice(j + 1, 1);
+                }
+                mergedTiles.push(tiles[j]);
+            }
+            
+            // Place tiles in new positions
+            for (let j = 0; j < mergedTiles.length; j++) {
+                const tile = mergedTiles[j];
+                const newCol = 3 - j;
+                if (tile.col !== newCol) {
+                    moved = true;
+                }
+                tile.row = i;
+                tile.col = newCol;
+                this.grid[i][newCol] = tile;
+            }
+        }
+        
+        return moved;
+    }
+    
+    moveUp() {
+        let moved = false;
+        
+        for (let j = 0; j < 4; j++) {
+            // Get tiles in this column
+            const tiles = [];
+            for (let i = 0; i < 4; i++) {
+                if (this.grid[i][j]) {
+                    tiles.push(this.grid[i][j]);
+                    this.grid[i][j] = null;
+                }
+            }
+            
+            // Merge tiles
+            const mergedTiles = [];
+            for (let i = 0; i < tiles.length; i++) {
+                if (i < tiles.length - 1 && tiles[i].value === tiles[i + 1].value) {
+                    // Merge tiles
+                    tiles[i].value *= 2;
+                    tiles[i].merged = true;
+                    this.score += tiles[i].value;
+                    
+                    // Remove the merged tile
+                    this.tiles.delete(tiles[i + 1].id);
+                    tiles.splice(i + 1, 1);
+                }
+                mergedTiles.push(tiles[i]);
+            }
+            
+            // Place tiles in new positions
+            for (let i = 0; i < mergedTiles.length; i++) {
+                const tile = mergedTiles[i];
+                if (tile.row !== i) {
+                    moved = true;
+                }
+                tile.row = i;
+                tile.col = j;
+                this.grid[i][j] = tile;
+            }
+        }
+        
+        return moved;
+    }
+    
+    moveDown() {
+        let moved = false;
+        
+        for (let j = 0; j < 4; j++) {
+            // Get tiles in this column
+            const tiles = [];
+            for (let i = 3; i >= 0; i--) {
+                if (this.grid[i][j]) {
+                    tiles.push(this.grid[i][j]);
+                    this.grid[i][j] = null;
+                }
+            }
+            
+            // Merge tiles
+            const mergedTiles = [];
+            for (let i = 0; i < tiles.length; i++) {
+                if (i < tiles.length - 1 && tiles[i].value === tiles[i + 1].value) {
+                    // Merge tiles
+                    tiles[i].value *= 2;
+                    tiles[i].merged = true;
+                    this.score += tiles[i].value;
+                    
+                    // Remove the merged tile
+                    this.tiles.delete(tiles[i + 1].id);
+                    tiles.splice(i + 1, 1);
+                }
+                mergedTiles.push(tiles[i]);
+            }
+            
+            // Place tiles in new positions
+            for (let i = 0; i < mergedTiles.length; i++) {
+                const tile = mergedTiles[i];
+                const newRow = 3 - i;
+                if (tile.row !== newRow) {
+                    moved = true;
+                }
+                tile.row = newRow;
+                tile.col = j;
+                this.grid[newRow][j] = tile;
+            }
+        }
+        
+        return moved;
+    }
+    
+    isGameWon() {
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (this.grid[i][j] && this.grid[i][j].value === 2048) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    isGameOver() {
+        // Check for empty cells
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (this.grid[i][j] === null) {
+                    return false;
+                }
+            }
+        }
+        
+        // Check for possible merges
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (this.grid[i][j] && this.grid[i][j + 1] && 
+                    this.grid[i][j].value === this.grid[i][j + 1].value) {
+                    return false;
+                }
+                if (this.grid[j][i] && this.grid[j + 1][i] && 
+                    this.grid[j][i].value === this.grid[j + 1][i].value) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    showWinMessage() {
+        this.endTitle.textContent = 'You Win! 🎉';
+        this.finalScoreElement.textContent = this.score;
+        this.gameOverScreen.style.display = 'block';
+    }
+    
+    endGame() {
+        this.gameOver = true;
+        this.endTitle.textContent = 'Game Over!';
+        this.finalScoreElement.textContent = this.score;
+        this.gameOverScreen.style.display = 'block';
+        
+        // Update statistics
+        this.totalScore += this.score;
+        if (this.score > this.bestScore) {
+            this.bestScore = this.score;
+            localStorage.setItem('2048BestScore', this.bestScore.toString());
+        }
+        
+        // Update best tile
+        const maxTileValue = Math.max(...Array.from(this.tiles.values()).map(tile => tile.value));
+        if (maxTileValue > this.bestTile) {
+            this.bestTile = maxTileValue;
+            localStorage.setItem('2048BestTile', this.bestTile.toString());
+        }
+        
+        localStorage.setItem('2048TotalScore', this.totalScore.toString());
+        this.updateStats();
+    }
+    
+    renderGrid() {
+        // Remove tiles that no longer exist
+        const existingTileElements = this.gridElement.querySelectorAll('.game2048-tile');
+        existingTileElements.forEach(element => {
+            const tileId = parseInt(element.dataset.tileId);
+            if (!this.tiles.has(tileId)) {
+                element.style.transition = 'opacity 0.1s ease-out';
+                element.style.opacity = '0';
+                setTimeout(() => element.remove(), 100);
+            }
+        });
+        
+        // Animate existing tiles and create new ones
+        this.tiles.forEach(tile => {
+            let element = this.gridElement.querySelector(`[data-tile-id="${tile.id}"]`);
+            
+            if (!element) {
+                // Create new tile element
+                element = document.createElement('div');
+                element.className = `game2048-tile tile-${tile.value}`;
+                element.textContent = tile.value;
+                element.dataset.tileId = tile.id;
+                
+                // Position at current location
+                element.style.left = `${tile.col * 78 + 10}px`;
+                element.style.top = `${tile.row * 78 + 10}px`;
+                
+                if (tile.isNew) {
+                    element.style.transform = 'scale(0)';
+                    element.style.opacity = '0';
+                }
+                
+                this.gridElement.appendChild(element);
+                
+                // Animate new tile appearance
+                if (tile.isNew) {
+                    setTimeout(() => {
+                        element.style.transition = 'transform 0.2s ease-in-out, opacity 0.2s ease-in-out';
+                        element.style.transform = 'scale(1)';
+                        element.style.opacity = '1';
+                    }, 50);
+                }
+            } else {
+                // Update existing tile
+                const oldLeft = tile.previousCol * 78 + 10;
+                const oldTop = tile.previousRow * 78 + 10;
+                const newLeft = tile.col * 78 + 10;
+                const newTop = tile.row * 78 + 10;
+                
+                // Update tile class and content if value changed (due to merge)
+                element.className = `game2048-tile tile-${tile.value}`;
+                element.textContent = tile.value;
+                
+                // Animate position change
+                if (oldLeft !== newLeft || oldTop !== newTop) {
+                    element.style.transition = 'left 0.25s ease-in-out, top 0.25s ease-in-out';
+                    element.style.left = `${newLeft}px`;
+                    element.style.top = `${newTop}px`;
+                }
+                
+                // Add merge animation
+                if (tile.merged) {
+                    element.style.animation = 'tileMerge 0.3s ease-in-out';
+                    setTimeout(() => {
+                        element.style.animation = '';
+                    }, 300);
+                }
+                
+                // Special glow effect for 2048 tile
+                if (tile.value === 2048) {
+                    element.style.boxShadow = '0 0 30px rgba(237, 194, 46, 0.8)';
+                } else {
+                    element.style.boxShadow = '';
+                }
+            }
+        });
+    }
+    
+    updateDisplay() {
+        this.scoreElement.textContent = this.score;
+        this.bestElement.textContent = this.bestScore;
+    }
+    
+    updateStats() {
+        this.gamesPlayedElement.textContent = this.gamesPlayed;
+        this.bestTileElement.textContent = this.bestTile;
+        this.totalScoreElement.textContent = this.totalScore;
+    }
+}
+
+// Initialize 2048 Game when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Only initialize if the game elements exist
+    if (document.getElementById('game2048Grid')) {
+        window.game2048 = new Game2048();
+    }
+});
