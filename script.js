@@ -995,6 +995,9 @@ class SnakeGame {
         
         document.addEventListener('keydown', (e) => this.handleKeyPress(e));
         
+        // Add touch controls for mobile
+        this.addTouchControls();
+        
         // Update time played every second when game is running
         setInterval(() => {
             if (this.gameRunning && !this.gamePaused) {
@@ -1028,6 +1031,61 @@ class SnakeGame {
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
             e.preventDefault();
         }
+    }
+    
+    addTouchControls() {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        const minSwipeDistance = 30; // Minimum distance for a swipe
+        
+        this.canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            const touch = e.touches[0];
+            touchStartX = touch.clientX;
+            touchStartY = touch.clientY;
+        }, { passive: false });
+        
+        this.canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
+            if (!this.gameRunning || this.gamePaused) return;
+            
+            const touch = e.changedTouches[0];
+            const touchEndX = touch.clientX;
+            const touchEndY = touch.clientY;
+            
+            const deltaX = touchEndX - touchStartX;
+            const deltaY = touchEndY - touchStartY;
+            
+            // Check if swipe distance is sufficient
+            if (Math.abs(deltaX) < minSwipeDistance && Math.abs(deltaY) < minSwipeDistance) {
+                return;
+            }
+            
+            // Determine swipe direction
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                // Horizontal swipe
+                if (deltaX > 0 && this.dx !== -1) {
+                    // Swipe right
+                    this.dx = 1;
+                    this.dy = 0;
+                } else if (deltaX < 0 && this.dx !== 1) {
+                    // Swipe left
+                    this.dx = -1;
+                    this.dy = 0;
+                }
+            } else {
+                // Vertical swipe
+                if (deltaY > 0 && this.dy !== -1) {
+                    // Swipe down
+                    this.dx = 0;
+                    this.dy = 1;
+                } else if (deltaY < 0 && this.dy !== 1) {
+                    // Swipe up
+                    this.dx = 0;
+                    this.dy = -1;
+                }
+            }
+        }, { passive: false });
     }
     
     startGame() {
