@@ -1,3 +1,248 @@
+// Theme Toggle Functionality
+function initializeTheme() {
+    const themeToggle = document.getElementById('theme-toggle');
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    
+    // Apply saved theme
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    
+    // Variables for easter eggs
+    let toggleCount = 0;
+    let lastToggleTime = 0;
+    
+    // Humorous messages for theme switching
+    const darkThemeMessages = [
+        {
+            message: "Welcome to the enlightened side! 🌙",
+            submessage: "You have chosen... wisely. The dark theme cult welcomes you."
+        },
+        {
+            message: "Excellent choice, fellow dark mode disciple! ✨",
+            submessage: "Your eyes and your soul thank you for this divine decision."
+        },
+        {
+            message: "You've seen the light... by choosing darkness! 🖤",
+            submessage: "Join us in the superior realm of dark theme supremacy."
+        },
+        {
+            message: "Ah, a person of culture and refined taste! 🎭",
+            submessage: "Welcome to the exclusive dark mode elite society."
+        },
+        {
+            message: "The force is strong with this one... 🔮",
+            submessage: "You understand the true power of the dark side."
+        }
+    ];
+    
+    const lightThemeMessages = [
+        {
+            message: "Nooo! You're abandoning the dark side! 😱",
+            submessage: "The dark theme cult is... disappointed. We thought you were one of us."
+        },
+        {
+            message: "Why must you torture your retinas so? 🔥",
+            submessage: "The dark mode gods weep at this betrayal of perfection."
+        },
+        {
+            message: "We don't understand this life choice... 💔",
+            submessage: "But we respect your right to be wrong. Come back to us!"
+        },
+        {
+            message: "You've chosen the path of ocular destruction! ⚡",
+            submessage: "The dark theme enlightenment awaits your inevitable return."
+        },
+        {
+            message: "Such a tragic fall from grace... 😢",
+            submessage: "Remember us when your eyes cry from the brightness."
+        },
+        {
+            message: "This is not the way... 🚫",
+            submessage: "But the dark theme will always be here when you realize your mistake."
+        }
+    ];
+    
+    const rapidToggleMessages = [
+        {
+            message: "Whoa there, theme toggle warrior! 🎮",
+            submessage: "Are you testing my reflexes or having an existential crisis?"
+        },
+        {
+            message: "Make up your mind already! 🤯",
+            submessage: "The themes are getting dizzy from all this switching!"
+        },
+        {
+            message: "I see you enjoy chaos... 🌪️",
+            submessage: "But even chaos needs to choose a side eventually."
+        },
+        {
+            message: "Having trouble deciding? 🤔",
+            submessage: "Pro tip: Dark theme is always the right answer."
+        }
+    ];
+    
+    const mobileEasterEggMessages = [
+        {
+            message: "Mobile theme warrior detected! 📱",
+            submessage: "Your dedication to theme toggling on mobile is... impressive and concerning."
+        }
+    ];
+    
+    // Function to show humorous toast
+    function showThemeToast(isDarkTheme, isRapidToggle = false, isMobileEasterEgg = false) {
+        // Remove any existing toast
+        const existingToast = document.querySelector('.theme-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+        
+        let randomMessage;
+        let toastClass;
+        let icon;
+        
+        if (isMobileEasterEgg) {
+            randomMessage = mobileEasterEggMessages[0];
+            toastClass = 'mobile-easter-egg';
+            icon = '📱';
+        } else if (isRapidToggle) {
+            randomMessage = rapidToggleMessages[Math.floor(Math.random() * rapidToggleMessages.length)];
+            toastClass = 'rapid-toggle';
+            icon = '🎭';
+        } else {
+            const messages = isDarkTheme ? darkThemeMessages : lightThemeMessages;
+            randomMessage = messages[Math.floor(Math.random() * messages.length)];
+            toastClass = isDarkTheme ? 'dark-theme' : 'light-theme';
+            icon = isDarkTheme ? '🌙' : '☀️';
+        }
+        
+        const toast = document.createElement('div');
+        toast.className = `theme-toast ${toastClass}`;
+        
+        toast.innerHTML = `
+            <div class="theme-toast-icon">${icon}</div>
+            <div class="theme-toast-content">
+                <div class="theme-toast-message">${randomMessage.message}</div>
+                <div class="theme-toast-submessage">${randomMessage.submessage}</div>
+            </div>
+        `;
+        
+        document.body.appendChild(toast);
+        
+        // Trigger animation
+        setTimeout(() => {
+            toast.classList.add('show');
+        }, 100);
+        
+        // Remove toast after delay
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 400);
+        }, 4000);
+    }
+    
+    // Toggle theme function
+    function toggleTheme() {
+        const currentTime = Date.now();
+        const timeSinceLastToggle = currentTime - lastToggleTime;
+        
+        // Check for rapid toggling (within 3 seconds)
+        if (timeSinceLastToggle < 3000) {
+            toggleCount++;
+        } else {
+            toggleCount = 1;
+        }
+        
+        lastToggleTime = currentTime;
+        
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('theme', newTheme);
+        
+        // Show appropriate message
+        if (toggleCount >= 5) {
+            showThemeToast(newTheme === 'dark', true);
+            toggleCount = 0; // Reset after showing rapid toggle message
+        } else {
+            showThemeToast(newTheme === 'dark');
+        }
+        
+        // Update navbar background for scroll effect
+        updateNavbarBackground();
+    }
+    
+    // Add click event listener
+    if (themeToggle) {
+        themeToggle.addEventListener('click', toggleTheme);
+        
+        // Add touch event for mobile easter egg
+        let touchCount = 0;
+        themeToggle.addEventListener('touchstart', () => {
+            touchCount++;
+            if (touchCount >= 10) {
+                showThemeToast(false, false, true); // Special mobile message
+                touchCount = 0;
+            }
+        });
+    }
+}
+
+// Update navbar background based on theme
+function updateNavbarBackground() {
+    const navbar = document.querySelector('.navbar');
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    
+    if (window.scrollY > 50) {
+        if (currentTheme === 'dark') {
+            navbar.style.background = 'rgba(26, 26, 26, 0.98)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        }
+        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
+    } else {
+        if (currentTheme === 'dark') {
+            navbar.style.background = 'rgba(26, 26, 26, 0.95)';
+        } else {
+            navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+        }
+        navbar.style.boxShadow = 'none';
+    }
+}
+
+// Initialize theme on page load
+document.addEventListener('DOMContentLoaded', initializeTheme);
+
+// Easter egg for developers
+document.addEventListener('DOMContentLoaded', () => {
+    const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+    
+    console.log(
+        `%c🌙 Welcome to the ${isDarkTheme ? 'ENLIGHTENED' : 'misguided'} side! 🌙`,
+        `color: ${isDarkTheme ? '#68d391' : '#dc3545'}; font-size: 16px; font-weight: bold;`
+    );
+    
+    if (isDarkTheme) {
+        console.log(
+            '%cYou are clearly a person of superior taste and intellect. The Dark Theme Cult™ welcomes you! 🖤',
+            'color: #a5b4fc; font-size: 12px; font-style: italic;'
+        );
+    } else {
+        console.log(
+            '%cYour choice in themes is... questionable. But we believe in redemption. Try the dark side! 😈',
+            'color: #f87171; font-size: 12px; font-style: italic;'
+        );
+    }
+    
+    console.log(
+        '%c💡 Pro tip: Click the theme toggle to join the dark side (or betray it).',
+        'color: #667eea; font-size: 11px;'
+    );
+});
+
 // Mobile Navigation Toggle
 const hamburger = document.getElementById('hamburger');
 const navMenu = document.getElementById('nav-menu');
@@ -28,16 +273,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
 });
 
 // Navbar background on scroll
-window.addEventListener('scroll', () => {
-    const navbar = document.querySelector('.navbar');
-    if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
-        navbar.style.boxShadow = '0 2px 20px rgba(0, 0, 0, 0.1)';
-    } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
-        navbar.style.boxShadow = 'none';
-    }
-});
+window.addEventListener('scroll', updateNavbarBackground);
 
 // Active navigation link highlighting
 window.addEventListener('scroll', () => {
@@ -222,16 +458,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Parallax effect for hero section
-window.addEventListener('scroll', () => {
-    const scrolled = window.pageYOffset;
-    const parallaxElements = document.querySelectorAll('.hero-image');
-    
-    parallaxElements.forEach(element => {
-        const speed = 0.5;
-        element.style.transform = `translateY(${scrolled * speed}px)`;
-    });
-});
 
 // Skills animation counter
 function animateCounter(element, target, duration = 2000) {
