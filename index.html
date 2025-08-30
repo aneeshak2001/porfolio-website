@@ -23,6 +23,7 @@
                 <a href="#achievements" class="nav-link">Achievements</a>
                 <a href="#projects" class="nav-link">Projects</a>
                 <a href="#skills" class="nav-link">Skills</a>
+                <a href="#game" class="nav-link">Game</a>
                 <a href="#contact" class="nav-link">Contact</a>
                 <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
                     <div class="theme-toggle-slider"></div>
@@ -59,6 +60,11 @@
             <div class="hero-image">
                 <div class="profile-image">
                     <img src="pic2.jpg" alt="Aneesh AK Profile Picture">
+                </div>
+                <div class="hero-social-links">
+                    <a href="https://github.com/aneeshak2001" class="hero-social-link" title="GitHub"><i class="fab fa-github"></i></a>
+                    <a href="https://linkedin.com/in/aneesh-ak" class="hero-social-link" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                    <button id="hero-email-copy" class="hero-social-link" title="Copy Email to Clipboard"><i class="fas fa-envelope"></i></button>
                 </div>
             </div>
         </div>
@@ -278,45 +284,45 @@
                 <div class="skill-category">
                     <h3>Programming Languages</h3>
                     <div class="skill-items">
-                        <span class="skill-item">C</span>
-                        <span class="skill-item">C++</span>
-                        <span class="skill-item">Python</span>
-                        <span class="skill-item">Java</span>
-                        <span class="skill-item">SQL</span>
-                        <span class="skill-item">JavaScript</span>
+                        <span class="skill-item" data-fun-fact="The language that taught me patience ⏰">C</span>
+                        <span class="skill-item" data-fun-fact="C with superpowers! 💪">C++</span>
+                        <span class="skill-item" data-fun-fact="My snake charming skills 🐍">Python</span>
+                        <span class="skill-item" data-fun-fact="Coffee brewing companion ☕">Java</span>
+                        <span class="skill-item" data-fun-fact="Database whisperer 🗄️">SQL</span>
+                        <span class="skill-item" data-fun-fact="Web magic maker ✨">JavaScript</span>
                     </div>
                 </div>
                 <div class="skill-category">
                     <h3>Frameworks & Technologies</h3>
                     <div class="skill-items">
-                        <span class="skill-item">ReactJS</span>
-                        <span class="skill-item">ExtJS</span>
-                        <span class="skill-item">Apache/Nginx</span>
-                        <span class="skill-item">Kafka</span>
-                        <span class="skill-item">Hazelcast</span>
-                        <span class="skill-item">LMAX Disruptor</span>
+                        <span class="skill-item" data-fun-fact="React and relax 😎">ReactJS</span>
+                        <span class="skill-item" data-fun-fact="Enterprise level wizardry 🧙‍♂️">ExtJS</span>
+                        <span class="skill-item" data-fun-fact="Server deployment master 🚀">Apache/Nginx</span>
+                        <span class="skill-item" data-fun-fact="Message streaming ninja 📡">Kafka</span>
+                        <span class="skill-item" data-fun-fact="Caching champion 🏆">Hazelcast</span>
+                        <span class="skill-item" data-fun-fact="Speed demon technology ⚡">LMAX Disruptor</span>
                     </div>
                 </div>
                 <div class="skill-category">
                     <h3>Financial Markets & Derivatives</h3>
                     <div class="skill-items">
-                        <span class="skill-item">Equity Derivatives</span>
-                        <span class="skill-item">Index Construction</span>
-                        <span class="skill-item">Algorithmic Trading</span>
-                        <span class="skill-item">Risk Management</span>
-                        <span class="skill-item">FX Options</span>
-                        <span class="skill-item">Quantitative Models</span>
+                        <span class="skill-item" data-fun-fact="Making money from money 💰">Equity Derivatives</span>
+                        <span class="skill-item" data-fun-fact="Building financial Lego blocks 🧱">Index Construction</span>
+                        <span class="skill-item" data-fun-fact="Teaching robots to trade better than humans 🤖📈">Algorithmic Trading</span>
+                        <span class="skill-item" data-fun-fact="Professional party pooper at trading parties 🎉❌">Risk Management</span>
+                        <span class="skill-item" data-fun-fact="Currency gambling with mathematical precision 🎲💱">FX Options</span>
+                        <span class="skill-item" data-fun-fact="Turning Greek letters into gold 🔤→💰">Quantitative Models</span>
                     </div>
                 </div>
                 <div class="skill-category">
                     <h3>Tools & Methodologies</h3>
                     <div class="skill-items">
-                        <span class="skill-item">Git</span>
-                        <span class="skill-item">Microsoft Office</span>
-                        <span class="skill-item">OpenCV</span>
-                        <span class="skill-item">TensorFlow</span>
-                        <span class="skill-item">Machine Learning</span>
-                        <span class="skill-item">Operations Research</span>
+                        <span class="skill-item" data-fun-fact="Version control therapy for perfectionists 🔄😅">Git</span>
+                        <span class="skill-item" data-fun-fact="Still making PowerPoints look professional since 1995 📊👔">Microsoft Office</span>
+                        <span class="skill-item" data-fun-fact="Teaching computers to see better than humans 👁️🤖">OpenCV</span>
+                        <span class="skill-item" data-fun-fact="Google's attempt to make everyone an AI expert 🧠⚡">TensorFlow</span>
+                        <span class="skill-item" data-fun-fact="Making predictions so good, it's basically fortune telling 🔮📊">Machine Learning</span>
+                        <span class="skill-item" data-fun-fact="Optimizing life choices with mathematical precision 🎯🔢">Operations Research</span>
                     </div>
                 </div>
             </div>
@@ -457,6 +463,75 @@
         </div>
     </section>
 
+    <!-- Game Section -->
+    <section id="game" class="game-section">
+        <div class="container">
+            <h2 class="section-title">Level Up Zone 🎮</h2>
+            <p class="game-intro">When I'm not optimizing financial algorithms, I'm optimizing my Snake high score! Ready to challenge me?</p>
+            
+            <div class="game-container">
+                <div class="game-header">
+                    <div class="game-info">
+                        <div class="score-display">
+                            <span>Score: <span id="score">0</span></span>
+                            <span>High Score: <span id="highScore">0</span></span>
+                        </div>
+                        <div class="game-controls-info">
+                            <p>Use arrow keys or WASD to move the snake</p>
+                        </div>
+                    </div>
+                    <div class="game-buttons">
+                        <button id="startBtn" class="game-btn">Start Game</button>
+                        <button id="pauseBtn" class="game-btn" disabled>Pause</button>
+                        <button id="resetBtn" class="game-btn">Reset</button>
+                    </div>
+                </div>
+                
+                <div class="game-canvas-container">
+                    <canvas id="gameCanvas" width="400" height="400"></canvas>
+                    <div id="gameOverScreen" class="game-over-screen" style="display: none;">
+                        <h3>Game Over!</h3>
+                        <p>Final Score: <span id="finalScore">0</span></p>
+                        <button id="restartBtn" class="game-btn">Play Again</button>
+                    </div>
+                </div>
+                
+                <div class="game-stats">
+                    <div class="stat-item">
+                        <span class="stat-label">Games Played:</span>
+                        <span id="gamesPlayed">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Food Eaten:</span>
+                        <span id="foodEaten">0</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Time Played:</span>
+                        <span id="timePlayed">0s</span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="gaming-facts">
+                <h3>Gaming Philosophy 🎯</h3>
+                <div class="facts-grid">
+                    <div class="fact-card">
+                        <i class="fas fa-brain"></i>
+                        <p>"Gaming taught me problem-solving before algorithms did"</p>
+                    </div>
+                    <div class="fact-card">
+                        <i class="fas fa-clock"></i>
+                        <p>"My APM in StarCraft > My trades per minute at Morgan Stanley"</p>
+                    </div>
+                    <div class="fact-card">
+                        <i class="fas fa-trophy"></i>
+                        <p>"Grinding levels in games = Training for grinding Excel models"</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
     <section id="contact" class="contact">
         <div class="container">
@@ -488,10 +563,10 @@
                         </div>
                     </div>
                     <div class="social-links">
-                        <a href="https://github.com/aneeshak2001" class="social-link" title="GitHub"><i class="fab fa-github"></i></a>
-                        <a href="https://linkedin.com/in/aneesh-ak" class="social-link" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="mailto:aneeshak2001@gmail.com" class="social-link" title="Email"><i class="fas fa-envelope"></i></a>
-                        <a href="Aneesh_AK_Resume_2025-04-07.pdf" class="social-link" title="Resume" target="_blank"><i class="fas fa-file-pdf"></i></a>
+                        <a href="https://github.com/aneeshak2001" class="hero-social-link" title="GitHub"><i class="fab fa-github"></i></a>
+                        <a href="https://linkedin.com/in/aneesh-ak" class="hero-social-link" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <button id="contact-email-copy" class="hero-social-link" title="Copy Email to Clipboard"><i class="fas fa-envelope"></i></button>
+                        <a href="Aneesh_AK_Resume_2025-04-07.pdf" class="hero-social-link" title="Resume" target="_blank"><i class="fas fa-file-pdf"></i></a>
                     </div>
                 </div>
                 <form class="contact-form" id="contact-form" action="mailto:aneeshak2001@gmail.com" method="POST" enctype="text/plain">

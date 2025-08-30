@@ -326,10 +326,12 @@ body {
     margin-bottom: 2rem;
     opacity: 0.8;
     line-height: 1.6;
+    text-align: justify;
 }
 
 .hero-buttons {
     display: flex;
+    justify-content: left;
     gap: 1rem;
     flex-wrap: wrap;
 }
@@ -368,6 +370,13 @@ body {
     color: #667eea;
 }
 
+.hero-image {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .profile-image {
     display: flex;
     justify-content: center;
@@ -381,6 +390,66 @@ body {
     object-fit: cover;
     border: 5px solid rgba(255, 255, 255, 0.2);
     box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Hero Social Links */
+.hero-social-links {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-top: 0;
+}
+
+.hero-social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
+    color: white;
+    text-decoration: none;
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+    backdrop-filter: blur(10px);
+    cursor: pointer;
+}
+
+/* Button-specific styles for email copy */
+.hero-social-link[type="button"],
+button.hero-social-link {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    outline: none;
+}
+
+.hero-social-link:hover {
+    background: white;
+    color: #667eea;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-color: white;
+}
+
+/* Different hover colors for each social platform */
+.hero-social-link:nth-child(1):hover {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
+
+.hero-social-link:nth-child(2):hover {
+    background: #0077b5;
+    color: white;
+    border-color: #0077b5;
+}
+
+.hero-social-link:nth-child(3):hover {
+    background: #ea4335;
+    color: white;
+    border-color: #ea4335;
 }
 
 /* Section Styles */
@@ -736,10 +805,29 @@ section {
     font-weight: 500;
     transition: transform 0.3s ease;
     white-space: nowrap;
+    position: relative;
+    cursor: pointer;
 }
 
 .skill-item:hover {
     transform: scale(1.05);
+}
+
+.skill-item:hover::after {
+    content: attr(data-fun-fact);
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--text-primary);
+    color: var(--bg-primary);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+    margin-bottom: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Projects Section */
@@ -1054,6 +1142,57 @@ section {
     gap: 1rem;
 }
 
+/* Contact section social links use hero-social-link styles but with theme adaptations */
+.contact .social-links .hero-social-link {
+    background: rgba(102, 126, 234, 0.1);
+    border: 2px solid rgba(102, 126, 234, 0.2);
+    color: #667eea;
+}
+
+.contact .social-links .hero-social-link:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+[data-theme="dark"] .contact .social-links .hero-social-link {
+    background: rgba(102, 126, 234, 0.1);
+    border: 2px solid rgba(102, 126, 234, 0.3);
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .contact .social-links .hero-social-link:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* Platform-specific hover colors for contact section */
+.contact .social-links .hero-social-link:nth-child(1):hover {
+    background: #333;
+    color: white;
+    border-color: #333;
+}
+
+.contact .social-links .hero-social-link:nth-child(2):hover {
+    background: #0077b5;
+    color: white;
+    border-color: #0077b5;
+}
+
+.contact .social-links .hero-social-link:nth-child(3):hover {
+    background: #ea4335;
+    color: white;
+    border-color: #ea4335;
+}
+
+.contact .social-links .hero-social-link:nth-child(4):hover {
+    background: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* Keep old social-link class for backward compatibility if needed */
 .social-link {
     width: 40px;
     height: 40px;
@@ -1260,6 +1399,18 @@ section {
         justify-content: center;
     }
 
+    .hero-social-links {
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+        justify-content: center;
+    }
+
+    .hero-social-link {
+        width: 45px;
+        height: 45px;
+        font-size: 1.1rem;
+    }
+
     .profile-image img {
         width: 250px;
         height: 250px;
@@ -1422,4 +1573,241 @@ section {
 /* Smooth scrolling offset for fixed navbar */
 html {
     scroll-padding-top: 70px;
+}
+
+/* Game Section Styles */
+.game-section {
+    padding: 80px 0;
+    background: var(--bg-secondary);
+}
+
+.game-intro {
+    text-align: center;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+.game-container {
+    background: var(--card-bg);
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px var(--shadow-light);
+    margin-bottom: 3rem;
+    border: 1px solid var(--border-color);
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.game-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.score-display {
+    display: flex;
+    gap: 2rem;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.score-display span {
+    padding: 0.5rem 1rem;
+    background: var(--gradient-primary);
+    color: white;
+    border-radius: 10px;
+    font-size: 0.9rem;
+}
+
+.game-controls-info p {
+    color: var(--text-muted);
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.game-buttons {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.game-btn {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    background: var(--gradient-primary);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.9rem;
+}
+
+.game-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+}
+
+.game-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.game-canvas-container {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2rem;
+}
+
+#gameCanvas {
+    border: 3px solid var(--border-color);
+    border-radius: 15px;
+    background: var(--bg-primary);
+    box-shadow: inset 0 2px 10px var(--shadow-light);
+}
+
+.game-over-screen {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.9);
+    color: white;
+    padding: 2rem;
+    border-radius: 15px;
+    text-align: center;
+    backdrop-filter: blur(10px);
+}
+
+.game-over-screen h3 {
+    margin: 0 0 1rem 0;
+    font-size: 1.5rem;
+}
+
+.game-stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    gap: 1rem;
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 15px;
+    border: 1px solid var(--border-color);
+}
+
+.stat-item {
+    text-align: center;
+    padding: 0.5rem;
+}
+
+.stat-label {
+    display: block;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+    margin-bottom: 0.25rem;
+}
+
+.stat-item span:last-child {
+    font-weight: 600;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+}
+
+.gaming-facts {
+    text-align: center;
+}
+
+.gaming-facts h3 {
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    font-size: 1.5rem;
+}
+
+.facts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.fact-card {
+    background: var(--card-bg);
+    padding: 1.5rem;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px var(--shadow-light);
+    border: 1px solid var(--border-color);
+    transition: all 0.3s ease;
+}
+
+.fact-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px var(--shadow-medium);
+}
+
+.fact-card i {
+    font-size: 2rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 1rem;
+}
+
+.fact-card p {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin: 0;
+    line-height: 1.5;
+}
+
+/* Game Section Responsive Design */
+@media (max-width: 768px) {
+    .game-header {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .score-display {
+        justify-content: center;
+    }
+    
+    .game-buttons {
+        justify-content: center;
+    }
+    
+    #gameCanvas {
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+    }
+    
+    .facts-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .game-container {
+        padding: 1rem;
+    }
+    
+    .score-display {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .game-buttons {
+        flex-direction: column;
+    }
 }

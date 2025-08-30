@@ -241,7 +241,114 @@ document.addEventListener('DOMContentLoaded', () => {
         '%c💡 Pro tip: Click the theme toggle to join the dark side (or betray it).',
         'color: #667eea; font-size: 11px;'
     );
+    
+    console.log(
+        '%c🎮 Secret: Try the Konami code (↑↑↓↓←→←→BA) for a surprise!',
+        'color: #f59e0b; font-size: 11px;'
+    );
 });
+
+// Konami Code Easter Egg
+let konamiCode = [];
+const konamiSequence = [
+    'ArrowUp', 'ArrowUp', 'ArrowDown', 'ArrowDown',
+    'ArrowLeft', 'ArrowRight', 'ArrowLeft', 'ArrowRight',
+    'KeyB', 'KeyA'
+];
+
+document.addEventListener('keydown', (e) => {
+    konamiCode.push(e.code);
+    
+    // Keep only the last 10 keys
+    if (konamiCode.length > 10) {
+        konamiCode.shift();
+    }
+    
+    // Check if sequence matches
+    if (konamiCode.length === 10 && 
+        konamiCode.every((key, index) => key === konamiSequence[index])) {
+        triggerKonamiEasterEgg();
+        konamiCode = []; // Reset
+    }
+});
+
+function triggerKonamiEasterEgg() {
+    // Create special modal
+    const modal = document.createElement('div');
+    modal.style.cssText = `
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.9);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        animation: fadeIn 0.5s ease;
+    `;
+    
+    modal.innerHTML = `
+        <div style="
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: zoomIn 0.5s ease;
+        ">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">🎮</div>
+            <h2 style="margin-bottom: 1rem; font-size: 1.8rem;">KONAMI CODE ACTIVATED!</h2>
+            <p style="margin-bottom: 1.5rem; opacity: 0.9; line-height: 1.6;">
+                🎉 Congratulations, fellow gamer! You've unlocked the secret developer mode!
+                <br><br>
+                💰 +30 Lives<br>
+                🔓 Unlimited Dark Theme Power<br>
+                🚀 Enhanced Portfolio Performance<br>
+                🌟 Legendary Status Achieved
+            </p>
+            <button id="konamiClose" style="
+                background: white;
+                color: #667eea;
+                border: none;
+                padding: 12px 24px;
+                border-radius: 25px;
+                font-weight: 600;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+            " onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                Accept Power-Up
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(modal);
+    
+    // Add CSS animation keyframes
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes zoomIn { from { transform: scale(0.5); } to { transform: scale(1); } }
+    `;
+    document.head.appendChild(style);
+    
+    // Close modal
+    document.getElementById('konamiClose').addEventListener('click', () => {
+        modal.style.animation = 'fadeIn 0.3s ease reverse';
+        setTimeout(() => modal.remove(), 300);
+    });
+    
+    // Also allow clicking outside to close
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) {
+            modal.style.animation = 'fadeIn 0.3s ease reverse';
+            setTimeout(() => modal.remove(), 300);
+        }
+    });
+}
 
 // Mobile Navigation Toggle
 const hamburger = document.getElementById('hamburger');
@@ -295,7 +402,65 @@ window.addEventListener('scroll', () => {
             link.classList.add('active');
         }
     });
+    
+    // Fun scroll easter egg - if someone scrolls way past the footer
+    const footer = document.querySelector('.footer');
+    const footerBottom = footer.offsetTop + footer.offsetHeight;
+    const overScrollThreshold = footerBottom + 500;
+    
+    if (!window.overScrollShown && window.scrollY > overScrollThreshold) {
+        window.overScrollShown = true;
+        showSecretScrollMessage();
+        
+        // Reset after 10 seconds
+        setTimeout(() => {
+            window.overScrollShown = false;
+        }, 10000);
+    }
 });
+
+function showSecretScrollMessage() {
+    const scrollToast = document.createElement('div');
+    scrollToast.style.cssText = `
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        z-index: 10002;
+        max-width: 300px;
+        animation: slideUp 0.5s ease;
+    `;
+    
+    scrollToast.innerHTML = `
+        <div style="font-size: 1.5rem; margin-bottom: 10px;">🔍</div>
+        <div style="font-weight: 600; margin-bottom: 5px;">Scroll Explorer Detected!</div>
+        <div style="font-size: 0.9rem; opacity: 0.9;">
+            Looking for more content? You've reached the void! 
+            But hey, your dedication to scrolling is impressive. 
+            The dark theme approves! 🌙
+        </div>
+    `;
+    
+    const slideUpStyle = document.createElement('style');
+    slideUpStyle.textContent = `
+        @keyframes slideUp {
+            from { transform: translateY(100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+    `;
+    document.head.appendChild(slideUpStyle);
+    
+    document.body.appendChild(scrollToast);
+    
+    setTimeout(() => {
+        scrollToast.style.animation = 'slideUp 0.3s ease reverse';
+        setTimeout(() => scrollToast.remove(), 300);
+    }, 4000);
+}
 
 // Contact form handling
 const contactForm = document.getElementById('contact-form');
@@ -316,14 +481,14 @@ contactForm.addEventListener('submit', async function(e) {
     
     // Simple validation
     if (!name || !email || !subject || !message) {
-        showStatus('Please fill in all fields.', 'error');
+        showStatus('Whoa there! 🛑 Looks like you forgot to fill in some fields. Even dark theme disciples need complete information!', 'error');
         return;
     }
     
     // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
-        showStatus('Please enter a valid email address.', 'error');
+        showStatus('🤔 That email address looks as suspicious as someone who prefers light theme... Please enter a valid one!', 'error');
         return;
     }
     
@@ -381,10 +546,23 @@ contactForm.addEventListener('submit', async function(e) {
 });
 
 function showLoading(isLoading) {
+    const funnyLoadingMessages = [
+        "🚀 Sending message through the dark theme dimension...",
+        "⚡ Compiling your message with quantum algorithms...",
+        "🌙 Consulting the dark mode gods for message delivery...",
+        "🔮 Using advanced Morgan Stanley delivery protocols...",
+        "💫 Encrypting message with IIT Madras-level security...",
+        "🎯 Deploying message with ultra-low latency (<5ms)..."
+    ];
+    
     if (isLoading) {
         btnText.style.display = 'none';
         btnLoading.style.display = 'inline';
         submitBtn.disabled = true;
+        
+        // Show random funny loading message
+        const randomMessage = funnyLoadingMessages[Math.floor(Math.random() * funnyLoadingMessages.length)];
+        btnLoading.innerHTML = `<i class="fas fa-spinner fa-spin"></i> ${randomMessage}`;
     } else {
         btnText.style.display = 'inline';
         btnLoading.style.display = 'none';
@@ -515,9 +693,20 @@ window.addEventListener('load', () => {
     }
 });
 
-// Preloader (optional)
+// Preloader with rotating jokes
 document.addEventListener('DOMContentLoaded', () => {
-    // Create a simple preloader if needed
+    const developerJokes = [
+        "Initializing dark theme supremacy...",
+        "Compiling years of coffee consumption...",
+        "Loading IIT Madras engineering protocols...",
+        "Optimizing for maximum awesomeness...",
+        "Deploying Morgan Stanley level sophistication...",
+        "Calibrating humor detection algorithms...",
+        "Syncing with the dark side of the force...",
+        "Establishing connection to the matrix..."
+    ];
+    
+    // Create a more sophisticated preloader
     const preloader = document.createElement('div');
     preloader.id = 'preloader';
     preloader.style.cssText = `
@@ -526,23 +715,50 @@ document.addEventListener('DOMContentLoaded', () => {
         left: 0;
         width: 100%;
         height: 100%;
-        background: #fff;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         z-index: 9999;
         transition: opacity 0.5s ease;
+        color: white;
     `;
     
     const spinner = document.createElement('div');
     spinner.style.cssText = `
-        width: 50px;
-        height: 50px;
-        border: 3px solid #f3f3f3;
-        border-top: 3px solid #667eea;
+        width: 60px;
+        height: 60px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top: 4px solid white;
         border-radius: 50%;
         animation: spin 1s linear infinite;
+        margin-bottom: 20px;
     `;
+    
+    const jokeText = document.createElement('div');
+    jokeText.style.cssText = `
+        font-size: 1.1rem;
+        font-weight: 500;
+        text-align: center;
+        max-width: 400px;
+        line-height: 1.4;
+    `;
+    
+    let jokeIndex = 0;
+    jokeText.textContent = developerJokes[jokeIndex];
+    
+    // Rotate jokes every 800ms
+    const jokeInterval = setInterval(() => {
+        jokeIndex = (jokeIndex + 1) % developerJokes.length;
+        jokeText.style.opacity = '0';
+        setTimeout(() => {
+            jokeText.textContent = developerJokes[jokeIndex];
+            jokeText.style.opacity = '1';
+        }, 200);
+    }, 800);
+    
+    jokeText.style.transition = 'opacity 0.3s ease';
     
     // Add CSS for spinner animation
     const style = document.createElement('style');
@@ -555,8 +771,747 @@ document.addEventListener('DOMContentLoaded', () => {
     document.head.appendChild(style);
     
     preloader.appendChild(spinner);
+    preloader.appendChild(jokeText);
     document.body.appendChild(preloader);
     
-    // Remove preloader after page loads
-    // (Preloader removal now handled above for instant load)
+    // Remove preloader after page loads with a minimum display time
+    const removePreloader = () => {
+        clearInterval(jokeInterval);
+        preloader.style.opacity = '0';
+        setTimeout(() => {
+            if (preloader.parentNode) {
+                preloader.parentNode.removeChild(preloader);
+            }
+        }, 500);
+    };
+    
+    // Minimum 2 second display time for people to enjoy the jokes
+    setTimeout(removePreloader, 2000);
 });
+
+// Add humorous stat tooltips and other funny interactions
+document.addEventListener('DOMContentLoaded', () => {
+    // Funny stat tooltips
+    const stats = document.querySelectorAll('.stat');
+    const funnyTooltips = [
+        "2+ years of turning coffee into code ☕️",
+        "99.08% - Almost perfect, just like my dark theme preference 😎", 
+        "8.95 CGPA - Proof that I can handle academic pressure AND theme controversies 🎓"
+    ];
+    
+    stats.forEach((stat, index) => {
+        if (funnyTooltips[index]) {
+            stat.style.cursor = 'pointer';
+            stat.title = funnyTooltips[index];
+            
+            stat.addEventListener('mouseenter', () => {
+                stat.style.transform = 'translateY(-5px) scale(1.02)';
+                stat.style.transition = 'transform 0.3s ease';
+            });
+            
+            stat.addEventListener('mouseleave', () => {
+                stat.style.transform = 'translateY(-5px)';
+            });
+        }
+    });
+    
+    // Funny project card interactions
+    const projectCards = document.querySelectorAll('.project-card');
+    const projectJokes = [
+        "Click me if you dare to see financial wizardry! 🧙‍♂️",
+        "Warning: May cause excessive appreciation for low-latency systems ⚡",
+        "Side effects include: Increased respect for collateral management 💼",
+        "This project runs on pure determination and dark theme energy 🌙",
+        "Computer vision so good, it solved your problems before you knew you had them 👁️",
+        "Excel/VBA powered - Yes, I made Excel do things it wasn't meant to do 📊"
+    ];
+    
+    projectCards.forEach((card, index) => {
+        if (projectJokes[index]) {
+            card.title = projectJokes[index];
+        }
+    });
+    
+    // Add a secret double-click easter egg to the logo
+    const logo = document.querySelector('.nav-logo a');
+    let logoClickCount = 0;
+    
+    logo.addEventListener('dblclick', () => {
+        logoClickCount++;
+        
+        if (logoClickCount === 1) {
+            showSecretMessage("🤔 Hmm, someone's curious about the logo...");
+        } else if (logoClickCount === 3) {
+            showSecretMessage("🎯 You're persistent! I like that in a developer.");
+        } else if (logoClickCount >= 5) {
+            showSecretMessage("🏆 Achievement Unlocked: Logo Master! You've discovered the secret of the persistent clicker.");
+            logoClickCount = 0; // Reset
+        }
+    });
+    
+    function showSecretMessage(message) {
+        const secretToast = document.createElement('div');
+        secretToast.style.cssText = `
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10001;
+            font-weight: 500;
+            text-align: center;
+            animation: popIn 0.5s ease;
+        `;
+        
+        secretToast.textContent = message;
+        document.body.appendChild(secretToast);
+        
+        const popInStyle = document.createElement('style');
+        popInStyle.textContent = `
+            @keyframes popIn {
+                0% { transform: translate(-50%, -50%) scale(0); }
+                80% { transform: translate(-50%, -50%) scale(1.1); }
+                100% { transform: translate(-50%, -50%) scale(1); }
+            }
+        `;
+        document.head.appendChild(popInStyle);
+        
+        setTimeout(() => {
+            secretToast.style.animation = 'popIn 0.3s ease reverse';
+            setTimeout(() => secretToast.remove(), 300);
+        }, 2500);
+    }
+    
+    // Add time-based humor to hero section
+    addTimeBasedGreeting();
+});
+
+function addTimeBasedGreeting() {
+    const hour = new Date().getHours();
+    let greeting = "";
+    let emoji = "";
+    
+    if (hour >= 0 && hour < 6) {
+        greeting = "Still awake? True dedication to dark theme supremacy! 🌙";
+        emoji = "🦉";
+    } else if (hour >= 6 && hour < 12) {
+        greeting = "Good morning! Start your day right - with dark theme! ☀️";
+        emoji = "🌅";
+    } else if (hour >= 12 && hour < 17) {
+        greeting = "Good afternoon! Perfect time to appreciate some dark mode elegance! 🌤️";
+        emoji = "☀️";
+    } else if (hour >= 17 && hour < 21) {
+        greeting = "Good evening! The perfect time for dark theme appreciation! 🌆";
+        emoji = "🌆";
+    } else {
+        greeting = "Good night! You're here late - just like a true developer! 🌙";
+        emoji = "🌃";
+    }
+    
+    // Add a subtle greeting that appears after 3 seconds
+    setTimeout(() => {
+        const heroDescription = document.querySelector('.hero-description');
+        if (heroDescription) {
+            const greetingElement = document.createElement('div');
+            greetingElement.style.cssText = `
+                margin-top: 15px;
+                padding: 10px 15px;
+                background: rgba(255, 255, 255, 0.1);
+                border-radius: 20px;
+                font-size: 0.9rem;
+                opacity: 0;
+                transition: opacity 1s ease;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.2);
+            `;
+            greetingElement.innerHTML = `${emoji} ${greeting}`;
+            heroDescription.appendChild(greetingElement);
+            
+            setTimeout(() => {
+                greetingElement.style.opacity = '1';
+            }, 100);
+        }
+    }, 3000);
+}
+
+// Snake Game Implementation
+class SnakeGame {
+    constructor() {
+        this.canvas = document.getElementById('gameCanvas');
+        this.ctx = this.canvas.getContext('2d');
+        this.gridSize = 20;
+        this.tileCount = this.canvas.width / this.gridSize;
+        
+        this.snake = [
+            { x: 10, y: 10 }
+        ];
+        this.food = {};
+        this.dx = 0;
+        this.dy = 0;
+        this.score = 0;
+        this.gameRunning = false;
+        this.gamePaused = false;
+        
+        // Game statistics
+        this.gamesPlayed = parseInt(localStorage.getItem('snakeGamesPlayed') || '0');
+        this.foodEaten = parseInt(localStorage.getItem('snakeFoodEaten') || '0');
+        this.highScore = parseInt(localStorage.getItem('snakeHighScore') || '0');
+        this.timePlayed = parseInt(localStorage.getItem('snakeTimePlayed') || '0');
+        this.gameStartTime = 0;
+        this.sessionTime = 0;
+        this.foodCountForMessages = 0; // Track food eaten for message timing
+        
+        this.initializeElements();
+        this.updateDisplay();
+        this.generateFood();
+        this.bindEvents();
+        this.draw();
+    }
+    
+    initializeElements() {
+        this.scoreElement = document.getElementById('score');
+        this.highScoreElement = document.getElementById('highScore');
+        this.gamesPlayedElement = document.getElementById('gamesPlayed');
+        this.foodEatenElement = document.getElementById('foodEaten');
+        this.timePlayedElement = document.getElementById('timePlayed');
+        this.finalScoreElement = document.getElementById('finalScore');
+        this.gameOverScreen = document.getElementById('gameOverScreen');
+        
+        this.startBtn = document.getElementById('startBtn');
+        this.pauseBtn = document.getElementById('pauseBtn');
+        this.resetBtn = document.getElementById('resetBtn');
+        this.restartBtn = document.getElementById('restartBtn');
+    }
+    
+    bindEvents() {
+        this.startBtn.addEventListener('click', () => this.startGame());
+        this.pauseBtn.addEventListener('click', () => this.togglePause());
+        this.resetBtn.addEventListener('click', () => this.resetGame());
+        this.restartBtn.addEventListener('click', () => this.restartGame());
+        
+        document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+        
+        // Update time played every second when game is running
+        setInterval(() => {
+            if (this.gameRunning && !this.gamePaused) {
+                this.sessionTime++;
+                this.updateTimeDisplay();
+            }
+        }, 1000);
+    }
+    
+    handleKeyPress(e) {
+        if (!this.gameRunning || this.gamePaused) return;
+        
+        const { key } = e;
+        
+        // Prevent moving in opposite direction
+        if ((key === 'ArrowLeft' || key === 'a' || key === 'A') && this.dx !== 1) {
+            this.dx = -1;
+            this.dy = 0;
+        } else if ((key === 'ArrowUp' || key === 'w' || key === 'W') && this.dy !== 1) {
+            this.dx = 0;
+            this.dy = -1;
+        } else if ((key === 'ArrowRight' || key === 'd' || key === 'D') && this.dx !== -1) {
+            this.dx = 1;
+            this.dy = 0;
+        } else if ((key === 'ArrowDown' || key === 's' || key === 'S') && this.dy !== -1) {
+            this.dx = 0;
+            this.dy = 1;
+        }
+        
+        // Prevent scrolling
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(key)) {
+            e.preventDefault();
+        }
+    }
+    
+    startGame() {
+        if (this.gameRunning) return;
+        
+        this.gameRunning = true;
+        this.gamePaused = false;
+        this.gameStartTime = Date.now();
+        this.sessionTime = 0;
+        this.dx = 1;
+        this.dy = 0;
+        
+        this.startBtn.disabled = true;
+        this.pauseBtn.disabled = false;
+        this.gameOverScreen.style.display = 'none';
+        
+        this.gameLoop = setInterval(() => {
+            if (!this.gamePaused) {
+                this.update();
+                this.draw();
+            }
+        }, 150);
+        
+        // Add humorous start message
+        this.showToast("Game started! Time to show those financial algorithms who's boss! 🐍", "success");
+    }
+    
+    togglePause() {
+        if (!this.gameRunning) return;
+        
+        this.gamePaused = !this.gamePaused;
+        this.pauseBtn.textContent = this.gamePaused ? 'Resume' : 'Pause';
+        
+        if (this.gamePaused) {
+            this.showToast("Paused! Even snakes need coffee breaks ☕", "info");
+        } else {
+            this.showToast("Resumed! Back to the grind! 🚀", "success");
+        }
+    }
+    
+    resetGame() {
+        this.gameRunning = false;
+        this.gamePaused = false;
+        clearInterval(this.gameLoop);
+        
+        this.snake = [{ x: 10, y: 10 }];
+        this.dx = 0;
+        this.dy = 0;
+        this.score = 0;
+        this.sessionTime = 0;
+        this.foodCountForMessages = 0; // Reset message counter
+        
+        this.startBtn.disabled = false;
+        this.pauseBtn.disabled = true;
+        this.pauseBtn.textContent = 'Pause';
+        this.gameOverScreen.style.display = 'none';
+        
+        this.generateFood();
+        this.updateDisplay();
+        this.draw();
+        
+        this.showToast("Game reset! Ready for another round? 🔄", "info");
+    }
+    
+    restartGame() {
+        this.resetGame();
+        setTimeout(() => this.startGame(), 100);
+    }
+    
+    update() {
+        const head = { x: this.snake[0].x + this.dx, y: this.snake[0].y + this.dy };
+        
+        // Wrap around borders instead of game over
+        if (head.x < 0) {
+            head.x = this.tileCount - 1;
+        } else if (head.x >= this.tileCount) {
+            head.x = 0;
+        }
+        
+        if (head.y < 0) {
+            head.y = this.tileCount - 1;
+        } else if (head.y >= this.tileCount) {
+            head.y = 0;
+        }
+        
+        // Check self collision
+        for (let segment of this.snake) {
+            if (head.x === segment.x && head.y === segment.y) {
+                this.gameOver();
+                return;
+            }
+        }
+        
+        this.snake.unshift(head);
+        
+        // Check food collision
+        if (head.x === this.food.x && head.y === this.food.y) {
+            this.score += 10;
+            this.foodEaten++;
+            this.foodCountForMessages++;
+            this.generateFood();
+            this.updateDisplay();
+            
+            // Show eat messages only every 5th food consumed
+            if (this.foodCountForMessages % 5 === 0) {
+                const eatMessages = [
+                    "Nom nom! That's some premium algorithmic apple! 🍎",
+                    "Delicious! Tastes like successful trades! 💰",
+                    "Growing stronger, just like my portfolio! 📈",
+                    "Snake.exe is running optimally! 🐍💻",
+                    "Fifth course achieved! Fine dining at its best! 🍽️",
+                    "Milestone munching! Every 5th bite counts! 🎯"
+                ];
+                this.showToast(eatMessages[Math.floor(Math.random() * eatMessages.length)], "success");
+            }
+        } else {
+            this.snake.pop();
+        }
+    }
+    
+    generateFood() {
+        this.food = {
+            x: Math.floor(Math.random() * this.tileCount),
+            y: Math.floor(Math.random() * this.tileCount)
+        };
+        
+        // Make sure food doesn't spawn on snake
+        for (let segment of this.snake) {
+            if (segment.x === this.food.x && segment.y === this.food.y) {
+                this.generateFood();
+                return;
+            }
+        }
+    }
+    
+    draw() {
+        // Clear canvas with theme-appropriate background
+        const isDarkTheme = document.documentElement.getAttribute('data-theme') === 'dark';
+        this.ctx.fillStyle = isDarkTheme ? '#1a1a1a' : '#ffffff';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+        
+        // Draw snake
+        this.ctx.fillStyle = '#667eea';
+        for (let segment of this.snake) {
+            this.ctx.fillRect(segment.x * this.gridSize, segment.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
+        }
+        
+        // Draw snake head with different color
+        if (this.snake.length > 0) {
+            this.ctx.fillStyle = '#764ba2';
+            const head = this.snake[0];
+            this.ctx.fillRect(head.x * this.gridSize, head.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
+        }
+        
+        // Draw food
+        this.ctx.fillStyle = '#ff6b6b';
+        this.ctx.fillRect(this.food.x * this.gridSize, this.food.y * this.gridSize, this.gridSize - 2, this.gridSize - 2);
+        
+        // Add grid lines for better visibility
+        this.ctx.strokeStyle = isDarkTheme ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.1)';
+        this.ctx.lineWidth = 0.5;
+        for (let i = 0; i <= this.tileCount; i++) {
+            this.ctx.beginPath();
+            this.ctx.moveTo(i * this.gridSize, 0);
+            this.ctx.lineTo(i * this.gridSize, this.canvas.height);
+            this.ctx.stroke();
+            
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, i * this.gridSize);
+            this.ctx.lineTo(this.canvas.width, i * this.gridSize);
+            this.ctx.stroke();
+        }
+    }
+    
+    gameOver() {
+        this.gameRunning = false;
+        this.gamePaused = false;
+        clearInterval(this.gameLoop);
+        
+        this.gamesPlayed++;
+        this.timePlayed += this.sessionTime;
+        
+        if (this.score > this.highScore) {
+            this.highScore = this.score;
+            this.showToast("NEW HIGH SCORE! You're basically a gaming god now! 👑", "success");
+        }
+        
+        this.saveStats();
+        this.updateDisplay();
+        
+        this.finalScoreElement.textContent = this.score;
+        this.gameOverScreen.style.display = 'block';
+        
+        this.startBtn.disabled = false;
+        this.pauseBtn.disabled = true;
+        this.pauseBtn.textContent = 'Pause';
+        
+        // Funny game over messages
+        const gameOverMessages = [
+            "Game Over! Even the best algorithms crash sometimes! 💥",
+            "Oops! Looks like your snake hit a NullPointerException! 🐛",
+            "Game Over! Time to debug your snake's pathfinding algorithm! 🔍",
+            "Crashed harder than the stock market in 2008! 📉"
+        ];
+        this.showToast(gameOverMessages[Math.floor(Math.random() * gameOverMessages.length)], "error");
+    }
+    
+    updateDisplay() {
+        this.scoreElement.textContent = this.score;
+        this.highScoreElement.textContent = this.highScore;
+        this.gamesPlayedElement.textContent = this.gamesPlayed;
+        this.foodEatenElement.textContent = this.foodEaten;
+        this.updateTimeDisplay();
+    }
+    
+    updateTimeDisplay() {
+        const totalTime = this.timePlayed + this.sessionTime;
+        const minutes = Math.floor(totalTime / 60);
+        const seconds = totalTime % 60;
+        this.timePlayedElement.textContent = `${minutes}m ${seconds}s`;
+    }
+    
+    saveStats() {
+        localStorage.setItem('snakeGamesPlayed', this.gamesPlayed.toString());
+        localStorage.setItem('snakeFoodEaten', this.foodEaten.toString());
+        localStorage.setItem('snakeHighScore', this.highScore.toString());
+        localStorage.setItem('snakeTimePlayed', this.timePlayed.toString());
+    }
+    
+    showToast(message, type) {
+        // Create a general toast system for the game
+        const toast = document.createElement('div');
+        toast.className = `game-toast game-toast-${type}`;
+        toast.innerHTML = `
+            <div class="game-toast-content">
+                <span class="game-toast-icon">
+                    ${type === 'success' ? '✅' : type === 'error' ? '❌' : type === 'info' ? 'ℹ️' : '🎮'}
+                </span>
+                <span class="game-toast-message">${message}</span>
+            </div>
+        `;
+        
+        // Add styles dynamically if not already added
+        if (!document.querySelector('#game-toast-styles')) {
+            const style = document.createElement('style');
+            style.id = 'game-toast-styles';
+            style.textContent = `
+                .game-toast {
+                    position: fixed;
+                    top: 100px;
+                    right: 20px;
+                    background: rgba(0, 0, 0, 0.9);
+                    color: white;
+                    padding: 15px 20px;
+                    border-radius: 10px;
+                    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                    z-index: 10000;
+                    transform: translateX(400px);
+                    transition: all 0.3s ease;
+                    backdrop-filter: blur(10px);
+                    border: 1px solid rgba(255, 255, 255, 0.1);
+                    max-width: 350px;
+                }
+                
+                .game-toast.show {
+                    transform: translateX(0);
+                }
+                
+                .game-toast-success {
+                    border-left: 4px solid #4CAF50;
+                }
+                
+                .game-toast-error {
+                    border-left: 4px solid #F44336;
+                }
+                
+                .game-toast-info {
+                    border-left: 4px solid #2196F3;
+                }
+                
+                .game-toast-content {
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                }
+                
+                .game-toast-icon {
+                    font-size: 1.2rem;
+                }
+                
+                .game-toast-message {
+                    font-size: 0.9rem;
+                    line-height: 1.4;
+                }
+                
+                @media (max-width: 768px) {
+                    .game-toast {
+                        right: 10px;
+                        left: 10px;
+                        max-width: none;
+                        transform: translateY(-100px);
+                    }
+                    
+                    .game-toast.show {
+                        transform: translateY(0);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        document.body.appendChild(toast);
+        
+        // Trigger animation
+        setTimeout(() => toast.classList.add('show'), 100);
+        
+        // Remove toast after 3 seconds
+        setTimeout(() => {
+            toast.classList.remove('show');
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
+        }, 3000);
+    }
+}
+
+// Initialize Snake Game when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    // Check if we're on a page with the game canvas
+    if (document.getElementById('gameCanvas')) {
+        window.snakeGame = new SnakeGame();
+    }
+});
+
+// Email Copy to Clipboard Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const heroEmailCopyBtn = document.getElementById('hero-email-copy');
+    const contactEmailCopyBtn = document.getElementById('contact-email-copy');
+    const emailAddress = 'aneeshak2001@gmail.com';
+    
+    // Function to handle email copy for any button
+    async function handleEmailCopy(button) {
+        try {
+            // Modern clipboard API
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(emailAddress);
+                showEmailCopyNotification('Email copied to clipboard! 📧', 'success');
+            } else {
+                // Fallback method for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = emailAddress;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                textArea.style.top = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                
+                if (document.execCommand('copy')) {
+                    showEmailCopyNotification('Email copied to clipboard! 📧', 'success');
+                } else {
+                    showEmailCopyNotification('Failed to copy email. Please copy manually: ' + emailAddress, 'error');
+                }
+                
+                document.body.removeChild(textArea);
+            }
+            
+            // Add visual feedback - temporarily change icon
+            const icon = button.querySelector('i');
+            const originalClass = icon.className;
+            icon.className = 'fas fa-check';
+            
+            setTimeout(() => {
+                icon.className = originalClass;
+            }, 1000);
+            
+        } catch (err) {
+            console.error('Failed to copy email: ', err);
+            showEmailCopyNotification('Failed to copy email. Please copy manually: ' + emailAddress, 'error');
+        }
+    }
+    
+    // Add event listeners to both buttons
+    if (heroEmailCopyBtn) {
+        heroEmailCopyBtn.addEventListener('click', () => handleEmailCopy(heroEmailCopyBtn));
+    }
+    
+    if (contactEmailCopyBtn) {
+        contactEmailCopyBtn.addEventListener('click', () => handleEmailCopy(contactEmailCopyBtn));
+    }
+});
+
+function showEmailCopyNotification(message, type) {
+    // Create notification toast
+    const toast = document.createElement('div');
+    toast.className = `email-copy-toast email-copy-toast-${type}`;
+    toast.innerHTML = `
+        <div class="email-copy-toast-content">
+            <span class="email-copy-toast-icon">
+                ${type === 'success' ? '✅' : '❌'}
+            </span>
+            <span class="email-copy-toast-message">${message}</span>
+        </div>
+    `;
+    
+    // Add styles dynamically if not already added
+    if (!document.querySelector('#email-copy-toast-styles')) {
+        const style = document.createElement('style');
+        style.id = 'email-copy-toast-styles';
+        style.textContent = `
+            .email-copy-toast {
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: rgba(0, 0, 0, 0.9);
+                color: white;
+                padding: 15px 20px;
+                border-radius: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+                z-index: 10000;
+                transform: translateX(400px);
+                transition: all 0.3s ease;
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                max-width: 350px;
+            }
+            
+            .email-copy-toast.show {
+                transform: translateX(0);
+            }
+            
+            .email-copy-toast-success {
+                border-left: 4px solid #4CAF50;
+            }
+            
+            .email-copy-toast-error {
+                border-left: 4px solid #F44336;
+            }
+            
+            .email-copy-toast-content {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            }
+            
+            .email-copy-toast-icon {
+                font-size: 1.2rem;
+            }
+            
+            .email-copy-toast-message {
+                font-size: 0.9rem;
+                line-height: 1.4;
+            }
+            
+            @media (max-width: 768px) {
+                .email-copy-toast {
+                    right: 10px;
+                    left: 10px;
+                    max-width: none;
+                    transform: translateY(-100px);
+                }
+                
+                .email-copy-toast.show {
+                    transform: translateY(0);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    }
+    
+    document.body.appendChild(toast);
+    
+    // Trigger animation
+    setTimeout(() => toast.classList.add('show'), 100);
+    
+    // Remove toast after 3 seconds
+    setTimeout(() => {
+        toast.classList.remove('show');
+        setTimeout(() => {
+            if (toast.parentNode) {
+                toast.parentNode.removeChild(toast);
+            }
+        }, 300);
+    }, 3000);
+}
