@@ -896,19 +896,19 @@ function addTimeBasedGreeting() {
     let emoji = "";
     
     if (hour >= 0 && hour < 6) {
-        greeting = "Still awake? True dedication to dark theme supremacy! 🌙";
+        greeting = "Still awake? True dedication to dark theme supremacy!";
         emoji = "🦉";
     } else if (hour >= 6 && hour < 12) {
-        greeting = "Good morning! Start your day right - with dark theme! ☀️";
+        greeting = "Good morning! Start your day right - with dark theme!";
         emoji = "🌅";
     } else if (hour >= 12 && hour < 17) {
-        greeting = "Good afternoon! Perfect time to appreciate some dark mode elegance! 🌤️";
+        greeting = "Good afternoon! Perfect time to appreciate some dark mode elegance!";
         emoji = "☀️";
     } else if (hour >= 17 && hour < 21) {
-        greeting = "Good evening! The perfect time for dark theme appreciation! 🌆";
+        greeting = "Good evening! The perfect time for dark theme appreciation!";
         emoji = "🌆";
     } else {
-        greeting = "Good night! You're here late - just like a true developer! 🌙";
+        greeting = "Good night! You're here late - just like a true developer!";
         emoji = "🌃";
     }
     
@@ -2315,4 +2315,225 @@ document.addEventListener('DOMContentLoaded', function() {
     if (document.getElementById('game2048Grid')) {
         window.game2048 = new Game2048();
     }
+    
+    // Initialize gaming facts
+    initializeGamingFacts();
 });
+
+// Gaming Facts Functionality
+function initializeGamingFacts() {
+    const factsContainer = document.querySelector('.facts-grid');
+    if (!factsContainer) return;
+    
+    // Fallback facts in case API fails
+    const fallbackFacts = [
+        {
+            icon: "fas fa-gamepad",
+            text: "The most expensive video game ever made was Grand Theft Auto V, costing over $265 million to develop - more than most Hollywood blockbusters!"
+        },
+        {
+            icon: "fas fa-users",
+            text: "Mario has appeared in over 200 games since 1981, making him more recognizable to children than Mickey Mouse!"
+        },
+        {
+            icon: "fas fa-clock",
+            text: "The original Pac-Man arcade machine had a kill screen bug at level 256 that made half the screen unplayable - it took 19 years for someone to reach it!"
+        },
+        {
+            icon: "fas fa-trophy",
+            text: "The highest-grossing video game of all time is Minecraft, with over 300 million copies sold worldwide!"
+        },
+        {
+            icon: "fas fa-brain",
+            text: "Playing video games can improve problem-solving skills, spatial awareness, and hand-eye coordination according to scientific studies!"
+        },
+        {
+            icon: "fas fa-rocket",
+            text: "The first video game ever created was 'Tennis for Two' in 1958, displayed on an oscilloscope at Brookhaven National Laboratory!"
+        },
+        {
+            icon: "fas fa-heart",
+            text: "Studies show that playing video games can reduce stress and improve mood by releasing endorphins and providing social connection!"
+        },
+        {
+            icon: "fas fa-star",
+            text: "The Legend of Zelda series was inspired by creator Shigeru Miyamoto's childhood experiences exploring caves and forests in Japan!"
+        },
+        {
+            icon: "fas fa-fire",
+            text: "Tetris is the most ported video game in history, available on over 65 different platforms from Game Boy to smartphones!"
+        },
+        {
+            icon: "fas fa-gem",
+            text: "The rarest video game cartridge is Nintendo World Championships 1990, with only 116 copies ever made, selling for over $100,000!"
+        },
+        {
+            icon: "fas fa-music",
+            text: "The original Super Mario Bros. theme song is one of the most recognizable pieces of music in the world, composed by Koji Kondo!"
+        },
+        {
+            icon: "fas fa-globe",
+            text: "Pokémon GO caused people to walk over 5.4 billion miles in its first year - enough to walk to Pluto and back!"
+        },
+        {
+            icon: "fas fa-lightning-bolt",
+            text: "The fastest completion of Super Mario Bros. speedrun is under 4 minutes and 55 seconds by human players!"
+        },
+        {
+            icon: "fas fa-eye",
+            text: "The average gamer has been playing for over 12 years, and 45% of gamers are women according to industry statistics!"
+        },
+        {
+            icon: "fas fa-coins",
+            text: "The most expensive in-game purchase ever made was a virtual space station in Entropia Universe for $330,000 real dollars!"
+        }
+    ];
+    
+    // Add refresh button
+    const factsSection = document.querySelector('.gaming-facts');
+    if (factsSection && !factsSection.querySelector('.refresh-facts-btn')) {
+        const refreshButton = document.createElement('button');
+        refreshButton.className = 'refresh-facts-btn';
+        refreshButton.innerHTML = '<i class="fas fa-sync-alt"></i> Refresh';
+        refreshButton.onclick = loadRandomFacts;
+        
+        const heading = factsSection.querySelector('h3');
+        heading.insertAdjacentElement('afterend', refreshButton);
+    }
+    
+    // Load initial facts
+    loadRandomFacts();
+    
+    function loadRandomFacts() {
+        // Show loading state
+        factsContainer.innerHTML = `
+            <div class="fact-card loading">
+                <i class="fas fa-spinner fa-spin"></i>
+                <p>Loading awesome gaming facts...</p>
+            </div>
+        `;
+        
+        // Try to fetch from APIs with timeout
+        const timeoutPromise = new Promise((_, reject) => 
+            setTimeout(() => reject(new Error('API timeout')), 8000)
+        );
+        
+        Promise.race([
+            Promise.race([fetchFromOpenTriviaDB(), timeoutPromise]),
+            Promise.race([fetchFromJServiceAPI(), timeoutPromise]),
+            Promise.race([fetchRandomGameFacts(), timeoutPromise])
+        ]).then(facts => {
+            if (facts && facts.length > 0) {
+                displayFacts(facts);
+            } else {
+                throw new Error('No facts received');
+            }
+        }).catch(error => {
+            console.log('Using fallback facts:', error);
+            displayFacts(getRandomFallbackFacts());
+        });
+    }
+    
+    async function fetchFromOpenTriviaDB() {
+        try {
+            const response = await fetch('https://opentdb.com/api.php?amount=10&category=15&type=multiple');
+            const data = await response.json();
+            
+            if (data.results && data.results.length > 0) {
+                return data.results.slice(0, 3).map((item, index) => ({
+                    icon: getRandomIcon(),
+                    text: `Gaming Trivia: ${decodeHTMLEntities(item.question)} Answer: ${decodeHTMLEntities(item.correct_answer)}`
+                }));
+            }
+            throw new Error('No trivia data');
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    async function fetchFromJServiceAPI() {
+        try {
+            const response = await fetch('https://jservice.io/api/clues?category=33'); // Video Games category
+            const data = await response.json();
+            
+            if (data && data.length > 0) {
+                const validClues = data.filter(clue => clue.question && clue.answer).slice(0, 3);
+                return validClues.map(clue => ({
+                    icon: getRandomIcon(),
+                    text: `Gaming Question: ${clue.question.replace(/<[^>]*>/g, '')} Answer: ${clue.answer.replace(/<[^>]*>/g, '')}`
+                }));
+            }
+            throw new Error('No jservice data');
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    async function fetchRandomGameFacts() {
+        try {
+            // Create custom gaming facts from different sources
+            const customFacts = [
+                "The first video game console was the Magnavox Odyssey, released in 1972, which had no sound and displayed only white blocks!",
+                "Pac-Man was originally called 'Puck-Man' but was changed to avoid potential vandalism of arcade machines!",
+                "The highest score ever achieved in the original Donkey Kong is 1,047,200 points by Steve Wiebe!",
+                "Nintendo was founded in 1889 as a playing card company, 100 years before they made video games!",
+                "The voice of Mario has been done by Charles Martinet since 1996, who also voices Luigi, Wario, and Waluigi!",
+                "Minecraft's world is approximately 8 times larger than Earth's surface area!",
+                "The original Legend of Zelda for NES was the first console game to include a save battery!",
+                "Street Fighter II's combo system was actually a programming bug that became a beloved feature!",
+                "The best-selling video game of all time is Tetris with over 520 million copies sold worldwide!",
+                "World of Warcraft has been played for a collective total of over 10 million years by all players combined!"
+            ];
+            
+            const shuffled = [...customFacts].sort(() => 0.5 - Math.random());
+            return shuffled.slice(0, 3).map(fact => ({
+                icon: getRandomIcon(),
+                text: fact
+            }));
+        } catch (error) {
+            throw error;
+        }
+    }
+    
+    function getRandomFallbackFacts() {
+        const shuffled = [...fallbackFacts].sort(() => 0.5 - Math.random());
+        return shuffled.slice(0, 3);
+    }
+    
+    function getRandomIcon() {
+        const icons = [
+            'fas fa-gamepad',
+            'fas fa-trophy',
+            'fas fa-star',
+            'fas fa-rocket',
+            'fas fa-gem',
+            'fas fa-fire',
+            'fas fa-brain',
+            'fas fa-heart',
+            'fas fa-clock',
+            'fas fa-users'
+        ];
+        return icons[Math.floor(Math.random() * icons.length)];
+    }
+    
+    function displayFacts(facts) {
+        factsContainer.innerHTML = facts.map(fact => `
+            <div class="fact-card">
+                <i class="${fact.icon}"></i>
+                <p>${fact.text}</p>
+            </div>
+        `).join('');
+        
+        // Add animation
+        const factCards = factsContainer.querySelectorAll('.fact-card');
+        factCards.forEach((card, index) => {
+            card.style.animation = `fadeInUp 0.6s ease ${index * 0.2}s both`;
+        });
+    }
+    
+    function decodeHTMLEntities(text) {
+        const textArea = document.createElement('textarea');
+        textArea.innerHTML = text;
+        return textArea.value;
+    }
+}

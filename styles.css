@@ -1972,6 +1972,68 @@ html {
     line-height: 1.5;
 }
 
+.refresh-facts-btn {
+    background: var(--gradient-primary);
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 1rem 0 2rem 0;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 15px rgba(64, 123, 255, 0.3);
+}
+
+.refresh-facts-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(64, 123, 255, 0.4);
+}
+
+.refresh-facts-btn:active {
+    transform: translateY(0);
+}
+
+.refresh-facts-btn i {
+    margin-right: 8px;
+    transition: transform 0.3s ease;
+}
+
+.refresh-facts-btn:hover i {
+    transform: rotate(180deg);
+}
+
+.fact-card.loading {
+    grid-column: 1 / -1;
+    background: var(--card-bg);
+    padding: 2rem;
+    text-align: center;
+}
+
+.fact-card.loading i {
+    font-size: 2rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* Game Section Responsive Design */
 @media (max-width: 768px) {
     .game-header {
